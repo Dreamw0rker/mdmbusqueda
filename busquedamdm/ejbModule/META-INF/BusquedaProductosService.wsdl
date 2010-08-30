@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:p1="http://mypo.com.mx/BPD/CAF/CatalogoProductos" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" name="BusquedaProductosService" targetNamespace="http://mypo.com.mx/BPD/CAF/CatalogoProductos">
+  <wsdl:documentation/>
+  <wsp:UsingPolicy wsdl:required="true"/>
+  <ifw:properties xmlns:ifw="urn:com-sap:ifr:v2:wsdl">
+    <ifw:category>ifmmessif</ifw:category>
+    <ifw:VersionID>983f8801951011df9b56000c296b9eee</ifw:VersionID>
+    <ifw:lifeCycleInfo>
+      <objectState/>
+    </ifw:lifeCycleInfo>
+    <ifw:runtimeVersion uri="urn:sap-com:soap:application:esr:server:710"/>
+    <ifw:communicationProfile uri="prf_dt_if_com_stateless"/>
+    <ifw:securityProfile uri="prf_dt_if_sec_low"/>
+    <ifw:classifications>
+      <ifw:classification name="ObjectType" namespace="http://uddi.sap.com/classification" uddikey="uddi:uddi.sap.com:categorization:object-type" valueCode="ifmmessif"/>
+      <ifw:classification name="ObjectID" namespace="http://uddi.sap.com/classification" uddikey="uddi:uddi.sap.com:categorization:object-id" valueCode="34efa94a52743ec9948857d73589baf1"/>
+    </ifw:classifications>
+    <ifw:additionalAttributes/>
+    <ifw:methods>
+      <ifw:method name="buscarProductos">
+        <ifw:isSynchron>true</ifw:isSynchron>
+        <ifw:isIdempotent>false</ifw:isIdempotent>
+        <ifw:isInbound>true</ifw:isInbound>
+        <ifw:interfaceCategory>inbound</ifw:interfaceCategory>
+        <ifw:communicationProfile uri="prf_dt_op_com_sync"/>
+        <ifw:lifeCycleInfo>
+          <objectState/>
+        </ifw:lifeCycleInfo>
+      </ifw:method>
+    </ifw:methods>
+    <ifw:messages>
+      <ifw:message name="BusquedaProductosResponse">
+        <ifw:messType>ifmmessage</ifw:messType>
+        <ifw:technicalNamespace>http://mypo.com.mx/BPD/CAF/CatalogoProductos</ifw:technicalNamespace>
+        <ifw:VersionID>60f59701950f11df8b23000c296b9eee</ifw:VersionID>
+      </ifw:message>
+      <ifw:message name="BusquedaProductosFault">
+        <ifw:messType>ifmfaultm</ifw:messType>
+        <ifw:technicalNamespace>http://mypo.com.mx/BPD/CAF/CatalogoProductos</ifw:technicalNamespace>
+        <ifw:VersionID>7d713231951011df96bb000c296b9eee</ifw:VersionID>
+      </ifw:message>
+      <ifw:message name="BusquedaProductosRequest">
+        <ifw:messType>ifmmessage</ifw:messType>
+        <ifw:technicalNamespace>http://mypo.com.mx/BPD/CAF/CatalogoProductos</ifw:technicalNamespace>
+        <ifw:VersionID>2da46201950f11df8608000c296b9eee</ifw:VersionID>
+      </ifw:message>
+    </ifw:messages>
+    <ifw:matchingInterfaces/>
+  </ifw:properties>
+  <wsp:Policy wsu:Id="OP_buscarProductos"/>
+  <wsdl:types>
+    <xsd:schema xmlns="http://mypo.com.mx/BPD/CAF/CatalogoProductos" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://mypo.com.mx/BPD/CAF/CatalogoProductos">
+      <xsd:element name="BusquedaProductosFault">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="standard" type="ExchangeFaultData"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="BusquedaProductosRequest" type="BusquedaProductosQuery"/>
+      <xsd:element name="BusquedaProductosResponse" type="BusquedaProductos"/>
+      <xsd:complexType name="SubItem">
+        <xsd:sequence>
+          <xsd:element name="itemPadre" type="Item"/>
+          <xsd:element maxOccurs="unbounded" minOccurs="0" name="subItems" type="Item"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="ExchangeFaultData">
+        <xsd:sequence>
+          <xsd:element name="faultText" type="xsd:string"/>
+          <xsd:element minOccurs="0" name="faultUrl" type="xsd:string"/>
+          <xsd:element maxOccurs="unbounded" minOccurs="0" name="faultDetail" type="ExchangeLogData"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="Item">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="cantidadMaxima" type="xsd:string"/>
+          <xsd:element minOccurs="0" name="cantidadMinima" type="xsd:string"/>
+          <xsd:element minOccurs="0" name="claveProducto" type="xsd:string"/>
+          <xsd:element minOccurs="0" name="descripcion" type="xsd:string"/>
+          <xsd:element minOccurs="0" name="partida" type="xsd:string"/>
+          <xsd:element minOccurs="0" name="PMR" type="xsd:string"/>
+          <xsd:element minOccurs="0" name="presentacion" type="xsd:string"/>
+          <xsd:element minOccurs="0" name="presentacionEmpaque" type="xsd:string"/>
+          <xsd:element minOccurs="0" name="sancion" type="xsd:string"/>
+          <xsd:element minOccurs="0" name="tipoContrato" type="xsd:string"/>
+          <xsd:element minOccurs="0" name="unidadMedida" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="ExchangeLogData">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="severity" type="xsd:string"/>
+          <xsd:element name="text" type="xsd:string"/>
+          <xsd:element minOccurs="0" name="url" type="xsd:string"/>
+          <xsd:element minOccurs="0" name="id" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="BusquedaProductosQuery">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="clave" type="xsd:string"/>
+          <xsd:element minOccurs="0" name="sustanciaActiva" type="xsd:string"/>
+          <xsd:element minOccurs="0" name="formaFarmaceutica" type="xsd:string"/>
+          <xsd:element minOccurs="0" name="descripcion" type="xsd:string"/>
+          <xsd:element minOccurs="0" name="concentracion" type="xsd:string"/>
+          <xsd:element minOccurs="0" name="empaque" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="BusquedaProductos">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="productos">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" name="listaProductos" type="SubItem"/>
+              </xsd:sequence>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:complexType>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="BusquedaProductosRequest">
+    <wsdl:documentation/>
+    <wsdl:part element="p1:BusquedaProductosRequest" name="BusquedaProductosRequest"/>
+  </wsdl:message>
+  <wsdl:message name="BusquedaProductosResponse">
+    <wsdl:documentation/>
+    <wsdl:part element="p1:BusquedaProductosResponse" name="BusquedaProductosResponse"/>
+  </wsdl:message>
+  <wsdl:message name="BusquedaProductosFault">
+    <wsdl:documentation/>
+    <wsdl:part element="p1:BusquedaProductosFault" name="BusquedaProductosFault"/>
+  </wsdl:message>
+  <wsdl:portType name="BusquedaProductosService">
+    <wsdl:documentation/>
+    <wsdl:operation name="buscarProductos">
+      <wsdl:documentation/>
+      <!--<wsp:Policy>
+        <wsp:PolicyReference URI="#OP_buscarProductos"/>
+      </wsp:Policy>
+      --><wsdl:input message="p1:BusquedaProductosRequest"/>
+      <wsdl:output message="p1:BusquedaProductosResponse"/>
+      <wsdl:fault message="p1:BusquedaProductosFault" name="BusquedaProductosFault"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BusquedaProductosServiceBinding" type="p1:BusquedaProductosService">
+    <soap:binding xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="buscarProductos">
+      <soap:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" soapAction="http://sap.com/xi/WebService/soap1.1"/>
+      <wsdl:input>
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="BusquedaProductosFault">
+        <soap:fault xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="BusquedaProductosFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+<wsdl:service name="BusquedaProductosService_Service">
+<wsdl:port xmlns:bprf="http://mypo.com.mx/BPD/CAF/CatalogoProductos" binding="bprf:BusquedaProductosServiceBinding" name="BusquedaProductosService_Port">
+<soap:address location="/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+</wsdl:port>
+</wsdl:service>
+</wsdl:definitions>
