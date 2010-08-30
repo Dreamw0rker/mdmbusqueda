@@ -4,11 +4,12 @@ import java.util.List;
 
 import javax.ejb.Local;
 
+import com.sap.mdm.MdmException;
 import com.sap.mdm.data.Record;
 
 
 @Local
 public interface BuscadorLocal {
-	List<Record> findProducts(String name);
+	List<Record> findProducts(String name) throws MdmException;
 	
 }

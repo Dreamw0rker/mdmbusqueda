@@ -1,5 +1,6 @@
 package mx.com.mypo.bpd.caf.catalogoproductos;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -14,6 +15,7 @@ import com.sap.engine.services.webservices.espbase.configuration.ann.dt.RelMessa
 import com.sap.engine.services.webservices.espbase.configuration.ann.dt.SessionHandlingDT;
 import com.sap.engine.services.webservices.espbase.configuration.ann.dt.TransportGuaranteeDT;
 import com.sap.engine.services.webservices.espbase.configuration.ann.dt.TransportGuaranteeEnumsLevel;
+import com.sap.mdm.MdmException;
 import com.sap.mdm.data.Record;
 import com.sap.tc.logging.Location;
 
@@ -31,8 +33,33 @@ public class BusquedaProductosServiceImplBean {
 
 	@RelMessagingNW05DTOperation(enableWSRM=false)
 	public  mx.com.mypo.bpd.caf.catalogoproductos.BusquedaProductos buscarProductos(mx.com.mypo.bpd.caf.catalogoproductos.BusquedaProductosQuery busquedaProductosRequest)throws mx.com.mypo.bpd.caf.catalogoproductos.BusquedaProductosFault_Exception {
-		List<Record> products = buscador.findProducts(busquedaProductosRequest.getDescripcion());
+		List<Record> products = new ArrayList<Record>();
+		try {
+			products = buscador.findProducts(busquedaProductosRequest.getDescripcion());
+		} catch (MdmException e) {
+			handleException(e, "MDM Exception");
+		} catch (Exception e) {
+			handleException(e, "Normal Exception");
+		}
 		loc.debugT("Products found: " + products.size());
 		return new BusquedaProductos();
+	}
+
+	private void handleException(Exception e, String type) throws BusquedaProductosFault_Exception {
+		BusquedaProductosFault faultInfo = new BusquedaProductosFault();
+		ExchangeFaultData faultData = new ExchangeFaultData();
+		faultData.setFaultText(e.getMessage());
+		StackTraceElement[] stackTrace = e.getStackTrace();
+		List<ExchangeLogData> faultDetails = faultData.getFaultDetail();
+		faultDetails.add( addFaultDetail(stackTrace, 0));
+		faultDetails.add( addFaultDetail(stackTrace, 1));
+		faultInfo.setStandard(faultData );
+		throw new BusquedaProductosFault_Exception(type, faultInfo);
+	}
+
+	private ExchangeLogData addFaultDetail(StackTraceElement[] stackTrace, int stackNr) {
+		ExchangeLogData faultDetail = new ExchangeLogData();
+		faultDetail.setText(stackTrace[stackNr].toString());
+		return faultDetail;
 	}
 }

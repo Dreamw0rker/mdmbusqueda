@@ -73,5 +73,21 @@
 			<entity-type>Java Package</entity-type>
 			<entity-sub-type>Source</entity-sub-type>
 		</entity>
+		<entity>
+			<name>mx.com.mypo.bpd.caf.catalogoproductos</name>
+			<package>mx/com/mypo/bpd/caf/catalogoproductos</package>
+			<caption>mx.com.mypo.bpd.caf.catalogoproductos</caption>
+			<description>mx.com.mypo.bpd.caf.catalogoproductos</description>
+			<entity-type>Java Package</entity-type>
+			<entity-sub-type>Class</entity-sub-type>
+		</entity>
+		<entity>
+			<name>mx.com.mypo.bpd.caf.catalogoproductos</name>
+			<package>mx/com/mypo/bpd/caf/catalogoproductos</package>
+			<caption>mx.com.mypo.bpd.caf.catalogoproductos</caption>
+			<description>mx.com.mypo.bpd.caf.catalogoproductos</description>
+			<entity-type>Java Package</entity-type>
+			<entity-sub-type>Source</entity-sub-type>
+		</entity>
 	</entities>
 </public-part>
