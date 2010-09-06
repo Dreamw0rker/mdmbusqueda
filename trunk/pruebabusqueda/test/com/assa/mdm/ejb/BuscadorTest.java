@@ -1,11 +1,16 @@
 package com.assa.mdm.ejb;
 
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.util.List;
+
+import mx.com.mypo.bpd.caf.catalogoproductos.SubItem;
 
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -51,9 +56,11 @@ public class BuscadorTest extends BaseMockitoTest {
 		when(recordSet.getRecords()).thenReturn(records );
 		when(command.getRecords()).thenReturn(recordSet);
 		
-		buscador.findProducts("AR");
+		List<SubItem> products = buscador.findProducts("AR");
+		assertEquals(1, products.size());
 		
 		verify(mockMdmConnection).getUserContext();
 		verify(mockCommandFactory).getLimitedRecordsCommand(eq(userCtx), anyString());
 	}
+	
 }
