@@ -7,6 +7,8 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 
+import mx.com.mypo.bpd.caf.catalogoproductos.SubItem;
+
 import com.assa.mdm.command.CommandFactory;
 import com.assa.mdm.connection.MDMConnection;
 import com.assa.mdm.data.Product;
@@ -31,10 +33,11 @@ import com.sap.tc.logging.Location;
  * Session Bean implementation class Buscador
  */
 @Stateless
+//@Interceptors(SpringBeanAutowiringInterceptor.class)
 public class Buscador implements BuscadorLocal {
 
 	private static final String PRODUCTO_BASE_IND = "Z000";
-
+//	@Autowired
 	private MDMConnection mdmConnection = new MDMConnection();
 
 	private CommandFactory commandFactory = new CommandFactory();
@@ -44,9 +47,9 @@ public class Buscador implements BuscadorLocal {
 	private Location loc = Location.getLocation(this.getClass());
 
 	@Override
-	public List<Record> findProducts(String name) throws MdmException {
+	public List<SubItem> findProducts(String name) throws MdmException {
 		UserSessionContext userCtx = mdmConnection.getUserContext();
-		List<Record> result = new ArrayList<Record>();
+		List<SubItem> result = new ArrayList<SubItem>();
 		RetrieveLimitedRecordsCommand limitedRecordsCommand = commandFactory
 				.getLimitedRecordsCommand(userCtx, Product.TABLE_NAME.toString());
 		Search search = limitedRecordsCommand.getSearch();
@@ -64,10 +67,10 @@ public class Buscador implements BuscadorLocal {
 		Product.FIELD_PADRE.initFieldId(repository, userCtx);
 		for (Record record : records) {
 			loc.debugT(record.getLookupDisplayValue(Product.FIELD_TIPO_MATERIAL.getFieldId()));
-			result.add(record);
+			result.add(new SubItem());
 			Collection<? extends Record> childRecords = addChildRecords(record, limitedRecordsCommand, search);
 			loc.debugT("Children: " + childRecords.size());
-			result.addAll(childRecords);
+//			result.addAll(childRecords);
 		}
 		return result;
 	}

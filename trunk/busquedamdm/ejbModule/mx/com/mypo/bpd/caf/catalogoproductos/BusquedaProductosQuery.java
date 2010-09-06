@@ -3,6 +3,7 @@ package mx.com.mypo.bpd.caf.catalogoproductos;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -16,6 +17,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
+ *         &lt;element name="partida" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="clave" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="sustanciaActiva" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="formaFarmaceutica" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
@@ -32,6 +34,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BusquedaProductosQuery", propOrder = {
+    "partida",
     "clave",
     "sustanciaActiva",
     "formaFarmaceutica",
@@ -41,12 +44,38 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class BusquedaProductosQuery {
 
+    @XmlElement(required = true)
+    protected String partida;
     protected String clave;
     protected String sustanciaActiva;
     protected String formaFarmaceutica;
     protected String descripcion;
     protected String concentracion;
     protected String empaque;
+
+    /**
+     * Gets the value of the partida property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getPartida() {
+        return partida;
+    }
+
+    /**
+     * Sets the value of the partida property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setPartida(String value) {
+        this.partida = value;
+    }
 
     /**
      * Gets the value of the clave property.
