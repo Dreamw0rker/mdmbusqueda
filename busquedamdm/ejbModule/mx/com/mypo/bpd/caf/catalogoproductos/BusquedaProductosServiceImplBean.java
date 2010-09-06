@@ -16,24 +16,23 @@ import com.sap.engine.services.webservices.espbase.configuration.ann.dt.SessionH
 import com.sap.engine.services.webservices.espbase.configuration.ann.dt.TransportGuaranteeDT;
 import com.sap.engine.services.webservices.espbase.configuration.ann.dt.TransportGuaranteeEnumsLevel;
 import com.sap.mdm.MdmException;
-import com.sap.mdm.data.Record;
 import com.sap.tc.logging.Location;
 
-@SrPublication(location="/mx/com/mypo/bpd/caf/catalogoproductos/BusquedaProductosServiceImplBean.classifications")
+//@SrPublication(location="/mx/com/mypo/bpd/caf/catalogoproductos/BusquedaProductosServiceImplBean.classifications")
 @SessionHandlingDT(enableSession=false)
 @AuthenticationDT(authenticationLevel=AuthenticationEnumsAuthenticationLevel.BASIC)
 @TransportGuaranteeDT(level=TransportGuaranteeEnumsLevel.NONE)
 @WebService(portName="BusquedaProductosService_Port", serviceName="BusquedaProductosService_Service", endpointInterface="mx.com.mypo.bpd.caf.catalogoproductos.BusquedaProductosService", targetNamespace="http://mypo.com.mx/BPD/CAF/CatalogoProductos", wsdlLocation="META-INF/wsdl/mx/com/mypo/bpd/caf/catalogoproductos/BusquedaProductosService/BusquedaProductosService.wsdl")
 @Stateless
 public class BusquedaProductosServiceImplBean {
-	@EJB(name="Buscador")
+//	@EJB(name="Buscador")
 	private BuscadorLocal buscador;
 	
 	private Location loc = Location.getLocation(this.getClass());
 
 	@RelMessagingNW05DTOperation(enableWSRM=false)
 	public  mx.com.mypo.bpd.caf.catalogoproductos.BusquedaProductos buscarProductos(mx.com.mypo.bpd.caf.catalogoproductos.BusquedaProductosQuery busquedaProductosRequest)throws mx.com.mypo.bpd.caf.catalogoproductos.BusquedaProductosFault_Exception {
-		List<Record> products = new ArrayList<Record>();
+		List<SubItem> products = new ArrayList<SubItem>();
 		try {
 			products = buscador.findProducts(busquedaProductosRequest.getDescripcion());
 		} catch (MdmException e) {

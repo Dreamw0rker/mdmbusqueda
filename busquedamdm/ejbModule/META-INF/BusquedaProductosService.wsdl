@@ -46,9 +46,9 @@
       </ifw:message>
     </ifw:messages>
     <ifw:matchingInterfaces/>
-  </ifw:properties>
+  </ifw:properties><!--
   <wsp:Policy wsu:Id="OP_buscarProductos"/>
-  <wsdl:types>
+  --><wsdl:types>
     <xsd:schema xmlns="http://mypo.com.mx/BPD/CAF/CatalogoProductos" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://mypo.com.mx/BPD/CAF/CatalogoProductos">
       <xsd:element name="BusquedaProductosFault">
         <xsd:complexType>
@@ -74,16 +74,12 @@
       </xsd:complexType>
       <xsd:complexType name="Item">
         <xsd:sequence>
-          <xsd:element minOccurs="0" name="cantidadMaxima" type="xsd:string"/>
-          <xsd:element minOccurs="0" name="cantidadMinima" type="xsd:string"/>
           <xsd:element minOccurs="0" name="claveProducto" type="xsd:string"/>
           <xsd:element minOccurs="0" name="descripcion" type="xsd:string"/>
           <xsd:element minOccurs="0" name="partida" type="xsd:string"/>
           <xsd:element minOccurs="0" name="PMR" type="xsd:string"/>
           <xsd:element minOccurs="0" name="presentacion" type="xsd:string"/>
           <xsd:element minOccurs="0" name="presentacionEmpaque" type="xsd:string"/>
-          <xsd:element minOccurs="0" name="sancion" type="xsd:string"/>
-          <xsd:element minOccurs="0" name="tipoContrato" type="xsd:string"/>
           <xsd:element minOccurs="0" name="unidadMedida" type="xsd:string"/>
         </xsd:sequence>
       </xsd:complexType>
@@ -97,6 +93,7 @@
       </xsd:complexType>
       <xsd:complexType name="BusquedaProductosQuery">
         <xsd:sequence>
+          <xsd:element name="partida" type="xsd:string"/>
           <xsd:element minOccurs="0" name="clave" type="xsd:string"/>
           <xsd:element minOccurs="0" name="sustanciaActiva" type="xsd:string"/>
           <xsd:element minOccurs="0" name="formaFarmaceutica" type="xsd:string"/>

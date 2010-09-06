@@ -35,19 +35,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link BusquedaProductos.Productos }
-     * 
-     */
-    public BusquedaProductos.Productos createBusquedaProductosProductos() {
-        return new BusquedaProductos.Productos();
-    }
-
-    /**
      * Create an instance of {@link ExchangeFaultData }
      * 
      */
     public ExchangeFaultData createExchangeFaultData() {
         return new ExchangeFaultData();
+    }
+
+    /**
+     * Create an instance of {@link ExchangeLogData }
+     * 
+     */
+    public ExchangeLogData createExchangeLogData() {
+        return new ExchangeLogData();
     }
 
     /**
@@ -67,11 +67,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ExchangeLogData }
+     * Create an instance of {@link BusquedaProductosFault }
      * 
      */
-    public ExchangeLogData createExchangeLogData() {
-        return new ExchangeLogData();
+    public BusquedaProductosFault createBusquedaProductosFault() {
+        return new BusquedaProductosFault();
     }
 
     /**
@@ -91,11 +91,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link BusquedaProductosFault }
+     * Create an instance of {@link BusquedaProductos.Productos }
      * 
      */
-    public BusquedaProductosFault createBusquedaProductosFault() {
-        return new BusquedaProductosFault();
+    public BusquedaProductos.Productos createBusquedaProductosProductos() {
+        return new BusquedaProductos.Productos();
     }
 
     /**

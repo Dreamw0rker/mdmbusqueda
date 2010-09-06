@@ -4,12 +4,13 @@ import java.util.List;
 
 import javax.ejb.Local;
 
+import mx.com.mypo.bpd.caf.catalogoproductos.SubItem;
+
 import com.sap.mdm.MdmException;
-import com.sap.mdm.data.Record;
 
 
 @Local
 public interface BuscadorLocal {
-	List<Record> findProducts(String name) throws MdmException;
+	List<SubItem> findProducts(String name) throws MdmException;
 	
 }

@@ -5,7 +5,7 @@ import com.sap.mdm.session.UserSessionContext;
 
 public enum Product {
 	TABLE_NAME("MDM_PRODUCTS"), FIELD_TIPO_MATERIAL("MDM_PRODUCT_TIPO"), FIELD_PADRE("MDM_MAT_PADRE"), 
-	FIELD_NUMERO_MATERIAL("MDM_PRODUCT_NUMBER");
+	FIELD_NUMERO_MATERIAL("MDM_PRODUCT_NUMBER"), FIELD_DESC_LARGA("MDM_TEXT_LARG");
 	
 	private final String sapName;
 	
