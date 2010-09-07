@@ -7,10 +7,12 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 
+import mx.com.mypo.bpd.caf.catalogoproductos.Item;
 import mx.com.mypo.bpd.caf.catalogoproductos.SubItem;
 
 import com.assa.mdm.command.CommandFactory;
 import com.assa.mdm.connection.MDMConnection;
+import com.assa.mdm.data.ItemFactory;
 import com.assa.mdm.data.Product;
 import com.assa.mdm.data.Repository;
 import com.sap.mdm.MdmException;
@@ -18,6 +20,7 @@ import com.sap.mdm.commands.CommandException;
 import com.sap.mdm.data.Record;
 import com.sap.mdm.data.RecordResultSet;
 import com.sap.mdm.data.commands.RetrieveLimitedRecordsCommand;
+import com.sap.mdm.extension.data.ResultDefinitionEx;
 import com.sap.mdm.search.FieldSearchDimension;
 import com.sap.mdm.search.KeywordSearchConstraint;
 import com.sap.mdm.search.KeywordSearchDimension;
@@ -45,34 +48,68 @@ public class Buscador implements BuscadorLocal {
 	private Repository repository = new Repository();
 
 	private Location loc = Location.getLocation(this.getClass());
+	private ItemFactory itemFactory = new ItemFactory();
 
 	@Override
 	public List<SubItem> findProducts(String name) throws MdmException {
 		UserSessionContext userCtx = mdmConnection.getUserContext();
-		List<SubItem> result = new ArrayList<SubItem>();
+		List<Product> products = initializeFields(userCtx);
+		
+		RetrieveLimitedRecordsCommand limitedRecordsCommand = 
+			getAndConfigureCommand(name, userCtx, products);
+		
+		return extractSubitems(limitedRecordsCommand);
+	}
+
+	private RetrieveLimitedRecordsCommand getAndConfigureCommand(String name, UserSessionContext userCtx, List<Product> products)
+			throws MdmException {
 		RetrieveLimitedRecordsCommand limitedRecordsCommand = commandFactory
 				.getLimitedRecordsCommand(userCtx, Product.TABLE_NAME.toString());
+		ResultDefinitionEx resultDefinition = (ResultDefinitionEx) limitedRecordsCommand.getResultDefinition();
+		for (Product product : products) {
+			resultDefinition.addSelectField(product.toString());
+		}
 		Search search = limitedRecordsCommand.getSearch();
 		SearchDimension sd = new KeywordSearchDimension();
 		SearchConstraint sc = new KeywordSearchConstraint(name,
 				KeywordSearchConstraint.CONTAINS);
 		search.addSearchItem(sd, sc);
-		Product.FIELD_TIPO_MATERIAL.initFieldId(repository, userCtx);
-		Product.FIELD_NUMERO_MATERIAL.initFieldId(repository, userCtx);
 		search.addSearchItem(new FieldSearchDimension(Product.FIELD_TIPO_MATERIAL.getFieldId()),
 				new TextSearchConstraint(PRODUCTO_BASE_IND, TextSearchConstraint.STARTS_WITH));
 		loc.debugT("Before executing command");
+		return limitedRecordsCommand;
+	}
+
+	private List<SubItem> extractSubitems(RetrieveLimitedRecordsCommand limitedRecordsCommand) 
+		throws CommandException {
+		List<SubItem> result = new ArrayList<SubItem>();
 		Record[] records = getResultRecords(limitedRecordsCommand);
 		loc.debugT("Found records: " + records.length);
-		Product.FIELD_PADRE.initFieldId(repository, userCtx);
 		for (Record record : records) {
 			loc.debugT(record.getLookupDisplayValue(Product.FIELD_TIPO_MATERIAL.getFieldId()));
-			result.add(new SubItem());
-			Collection<? extends Record> childRecords = addChildRecords(record, limitedRecordsCommand, search);
+			SubItem subitem = new SubItem();
+			result.add(subitem);
+			subitem.setItemPadre(itemFactory.toItem(record));
+			Collection<? extends Record> childRecords = addChildRecords(record, limitedRecordsCommand);
+			List<Item> subItems = subitem.getSubItems();
 			loc.debugT("Children: " + childRecords.size());
-//			result.addAll(childRecords);
+			for (Record child : childRecords) {
+				subItems.add(itemFactory.toItem(child));
+			}
 		}
 		return result;
+	}
+
+	private List<Product> initializeFields(UserSessionContext userCtx) {
+		List<Product> productFields = new ArrayList<Product>();
+		for (Product product : Product.values()) {
+			if (product != Product.TABLE_NAME) {
+				productFields.add(product);
+				product.initFieldId(repository, userCtx);
+				loc.debugT(product.toString() + ":" + product.getFieldId());
+			}
+		}
+		return productFields;
 	}
 
 	private Record[] getResultRecords(
@@ -85,8 +122,9 @@ public class Buscador implements BuscadorLocal {
 	}
 
 	private Collection<? extends Record> addChildRecords(Record record,
-			RetrieveLimitedRecordsCommand command, Search search)
+			RetrieveLimitedRecordsCommand command)
 			throws CommandException {
+		Search search = command.getSearch();
 		loc.entering();
 		search.clear();
 		StringValue numeroMaterialField = (StringValue) record
@@ -97,14 +135,6 @@ public class Buscador implements BuscadorLocal {
 				searchConstr);
 		loc.exiting();
 		return Arrays.asList(getResultRecords(command));
-	}
-
-	public void setMdmConnection(MDMConnection mdmConnection) {
-		this.mdmConnection = mdmConnection;
-	}
-
-	public void setCommandFactory(CommandFactory commandFactory) {
-		this.commandFactory = commandFactory;
 	}
 
 }
