@@ -1,10 +1,11 @@
 package com.assa.mdm.ejb;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -18,12 +19,14 @@ import org.mockito.Mock;
 
 import com.assa.mdm.command.CommandFactory;
 import com.assa.mdm.connection.MDMConnection;
+import com.assa.mdm.data.ItemFactory;
 import com.assa.mdm.data.Product;
 import com.assa.mdm.data.Repository;
 import com.assa.test.BaseMockitoTest;
 import com.sap.mdm.data.Record;
 import com.sap.mdm.data.RecordResultSet;
 import com.sap.mdm.data.commands.RetrieveLimitedRecordsCommand;
+import com.sap.mdm.extension.data.ResultDefinitionEx;
 import com.sap.mdm.ids.FieldId;
 import com.sap.mdm.search.Search;
 import com.sap.mdm.session.UserSessionContext;
@@ -39,6 +42,8 @@ public class BuscadorTest extends BaseMockitoTest {
 	@SuppressWarnings("unused")
 	@Mock
 	private Repository repository;
+	@Mock
+	private ItemFactory itemFactory;
 	
 	@Test
 	public void shouldGetCommands() throws Exception {
@@ -55,12 +60,15 @@ public class BuscadorTest extends BaseMockitoTest {
 		Record[] records = new Record[] {record };
 		when(recordSet.getRecords()).thenReturn(records );
 		when(command.getRecords()).thenReturn(recordSet);
+		ResultDefinitionEx resultDefinition = mock(ResultDefinitionEx.class);
+		when(command.getResultDefinition()).thenReturn(resultDefinition);
 		
 		List<SubItem> products = buscador.findProducts("AR");
 		assertEquals(1, products.size());
 		
 		verify(mockMdmConnection).getUserContext();
 		verify(mockCommandFactory).getLimitedRecordsCommand(eq(userCtx), anyString());
+		verify(itemFactory, times(2)).toItem(record);
 	}
 	
 }
