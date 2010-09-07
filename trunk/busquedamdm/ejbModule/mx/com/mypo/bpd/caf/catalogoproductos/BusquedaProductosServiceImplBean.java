@@ -7,8 +7,9 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.jws.WebService;
 
+import mx.com.mypo.bpd.caf.catalogoproductos.BusquedaProductos.Productos;
+
 import com.assa.mdm.ejb.BuscadorLocal;
-import com.sap.engine.services.webservices.annotations.SrPublication;
 import com.sap.engine.services.webservices.espbase.configuration.ann.dt.AuthenticationDT;
 import com.sap.engine.services.webservices.espbase.configuration.ann.dt.AuthenticationEnumsAuthenticationLevel;
 import com.sap.engine.services.webservices.espbase.configuration.ann.dt.RelMessagingNW05DTOperation;
@@ -25,7 +26,7 @@ import com.sap.tc.logging.Location;
 @WebService(portName="BusquedaProductosService_Port", serviceName="BusquedaProductosService_Service", endpointInterface="mx.com.mypo.bpd.caf.catalogoproductos.BusquedaProductosService", targetNamespace="http://mypo.com.mx/BPD/CAF/CatalogoProductos", wsdlLocation="META-INF/wsdl/mx/com/mypo/bpd/caf/catalogoproductos/BusquedaProductosService/BusquedaProductosService.wsdl")
 @Stateless
 public class BusquedaProductosServiceImplBean {
-//	@EJB(name="Buscador")
+	@EJB(name="Buscador")
 	private BuscadorLocal buscador;
 	
 	private Location loc = Location.getLocation(this.getClass());
@@ -41,7 +42,15 @@ public class BusquedaProductosServiceImplBean {
 			handleException(e, "Normal Exception");
 		}
 		loc.debugT("Products found: " + products.size());
-		return new BusquedaProductos();
+		BusquedaProductos busquedaProductos = new BusquedaProductos();
+		Productos productos = new BusquedaProductos.Productos();
+		List<SubItem> listaProductos = productos.getListaProductos();
+		busquedaProductos.setProductos(productos);
+		for (SubItem subItem : products) {
+			listaProductos.add(subItem);
+		}
+		
+		return busquedaProductos;
 	}
 
 	private void handleException(Exception e, String type) throws BusquedaProductosFault_Exception {
