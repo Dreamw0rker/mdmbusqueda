@@ -1,9 +1,7 @@
 package com.maypo.catalogoproductos.busqueda;
 
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.isA;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.util.Map;
 
@@ -34,8 +32,9 @@ public class BusquedaProductosServiceTest extends BaseMockitoTest {
 	@Test
 	public void shouldConfigureBusquedaWithDescripcion() throws Exception {
 		busquedaProductosRequest.setDescripcion(descripcion);
+		busquedaProductosRequest.setPartida("12");
 		Map<Product, String> parametrosBusqueda = executeTest();
-		verifyParameter(parametrosBusqueda, Product.FIELD_DESC_LARGA, descripcion);
+		verifyParameter(parametrosBusqueda, Product.FIELD_DESC, descripcion);
 	}
 
 	private void verifyParameter(Map<Product, String> parametrosBusqueda, Product key, String value) {
@@ -47,7 +46,7 @@ public class BusquedaProductosServiceTest extends BaseMockitoTest {
 	private Map<Product, String> executeTest() throws BusquedaProductosFault_Exception, MdmException {
 		busquedaService.buscarProductos(busquedaProductosRequest);
 		ArgumentCaptor<Map> busquedaMap = ArgumentCaptor.forClass(Map.class);
-		verify(buscador).findProducts(busquedaMap.capture());
+		verify(buscador).findProducts(busquedaMap.capture(), busquedaProductosRequest.getPartida());
 		Map<Product, String> parametrosBusqueda = busquedaMap.getValue();
 		return parametrosBusqueda;
 	}
@@ -82,7 +81,7 @@ public class BusquedaProductosServiceTest extends BaseMockitoTest {
 	@Test(expected=BusquedaProductosFault_Exception.class)
 	public void shouldThrowBusquedaFaultExcecion() throws Exception {
 		busquedaProductosRequest.setDescripcion(descripcion);
-		when(buscador.findProducts(isA(Map.class))).thenThrow(new MdmException());
+		when(buscador.findProducts(isA(Map.class), anyString())).thenThrow(new MdmException());
 		
 		busquedaService.buscarProductos(busquedaProductosRequest);
 	}
