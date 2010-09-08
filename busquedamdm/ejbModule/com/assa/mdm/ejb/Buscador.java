@@ -26,8 +26,6 @@ import com.sap.mdm.search.FieldSearchDimension;
 import com.sap.mdm.search.KeywordSearchConstraint;
 import com.sap.mdm.search.KeywordSearchDimension;
 import com.sap.mdm.search.Search;
-import com.sap.mdm.search.SearchConstraint;
-import com.sap.mdm.search.SearchDimension;
 import com.sap.mdm.search.TextSearchConstraint;
 import com.sap.mdm.session.UserSessionContext;
 import com.sap.mdm.valuetypes.StringValue;
@@ -57,13 +55,13 @@ public class Buscador implements BuscadorLocal {
 		List<Product> products = initializeFields(userCtx);
 		
 		RetrieveLimitedRecordsCommand limitedRecordsCommand = 
-			getAndConfigureCommand(parametrosBusqueda.get(Product.FIELD_DESC_LARGA), userCtx, products);
+			getAndConfigureCommand(parametrosBusqueda, userCtx, products);
 		
 		return extractSubitems(limitedRecordsCommand);
 	}
 
-	private RetrieveLimitedRecordsCommand getAndConfigureCommand(String name, UserSessionContext userCtx, List<Product> products)
-			throws MdmException {
+	private RetrieveLimitedRecordsCommand getAndConfigureCommand(Map<Product, String> parametrosBusqueda, UserSessionContext userCtx, 
+			List<Product> products) throws MdmException {
 		RetrieveLimitedRecordsCommand limitedRecordsCommand = commandFactory
 				.getLimitedRecordsCommand(userCtx, Product.TABLE_NAME.toString());
 		ResultDefinitionEx resultDefinition = (ResultDefinitionEx) limitedRecordsCommand.getResultDefinition();
@@ -71,10 +69,15 @@ public class Buscador implements BuscadorLocal {
 			resultDefinition.addSelectField(product.toString());
 		}
 		Search search = limitedRecordsCommand.getSearch();
-		SearchDimension sd = new KeywordSearchDimension();
-		SearchConstraint sc = new KeywordSearchConstraint(name,
-				KeywordSearchConstraint.CONTAINS);
-		search.addSearchItem(sd, sc);
+		if (parametrosBusqueda.containsKey(Product.FIELD_DESC_LARGA)) {
+			search.addSearchItem(new KeywordSearchDimension(), new KeywordSearchConstraint(parametrosBusqueda.get(
+					Product.FIELD_DESC_LARGA), KeywordSearchConstraint.CONTAINS));
+			parametrosBusqueda.remove(Product.FIELD_DESC_LARGA);
+		}
+		for (Product product : parametrosBusqueda.keySet()) {
+			search.addSearchItem(new FieldSearchDimension(product.getFieldId()), new TextSearchConstraint(
+					parametrosBusqueda.get(product), TextSearchConstraint.CONTAINS));
+		}
 		search.addSearchItem(new FieldSearchDimension(Product.FIELD_TIPO_MATERIAL.getFieldId()),
 				new TextSearchConstraint(PRODUCTO_BASE_IND, TextSearchConstraint.STARTS_WITH));
 		loc.debugT("Before executing command");
