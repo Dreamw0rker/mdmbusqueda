@@ -1,13 +1,8 @@
 package com.assa.mdm.ejb;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+
 
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +10,7 @@ import java.util.Map;
 
 import mx.com.mypo.bpd.caf.catalogoproductos.SubItem;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -25,12 +21,15 @@ import com.assa.mdm.data.ItemFactory;
 import com.assa.mdm.data.Product;
 import com.assa.mdm.data.Repository;
 import com.assa.test.BaseMockitoTest;
+import com.sap.mdm.MdmException;
 import com.sap.mdm.data.Record;
 import com.sap.mdm.data.RecordResultSet;
 import com.sap.mdm.data.commands.RetrieveLimitedRecordsCommand;
 import com.sap.mdm.extension.data.ResultDefinitionEx;
 import com.sap.mdm.ids.FieldId;
 import com.sap.mdm.search.Search;
+import com.sap.mdm.search.SearchConstraint;
+import com.sap.mdm.search.SearchDimension;
 import com.sap.mdm.session.UserSessionContext;
 import com.sap.mdm.valuetypes.StringValue;
 
@@ -46,25 +45,34 @@ public class BuscadorTest extends BaseMockitoTest {
 	private Repository repository;
 	@Mock
 	private ItemFactory itemFactory;
+	@Mock
+	private RetrieveLimitedRecordsCommand command;
+	@Mock
+	private Search search;
+	@Mock
+	private UserSessionContext userCtx;
+	@Mock
+	private ResultDefinitionEx resultDefinition;
+	@Mock
+	private RecordResultSet recordSet;
+	@Mock
+	private Record record;
+	
+	@Before
+	public void configureMocks() throws MdmException {
+		when(mockMdmConnection.getUserContext()).thenReturn(userCtx );
+		when(mockCommandFactory.getLimitedRecordsCommand(userCtx, Product.TABLE_NAME.toString())).thenReturn(command );
+		when(command.getSearch()).thenReturn(search);
+		when(command.getResultDefinition()).thenReturn(resultDefinition);
+		when(command.getRecords()).thenReturn(recordSet);
+		Record[] records = new Record[] {record };
+		when(recordSet.getRecords()).thenReturn(records );
+		StringValue stringValue = mock(StringValue.class);
+		when(record.getFieldValue(any(FieldId.class))).thenReturn(stringValue);
+	}
 	
 	@Test
 	public void shouldGetCommands() throws Exception {
-		UserSessionContext userCtx = mock(UserSessionContext.class);
-		when(mockMdmConnection.getUserContext()).thenReturn(userCtx );
-		RetrieveLimitedRecordsCommand command = mock(RetrieveLimitedRecordsCommand.class);
-		when(mockCommandFactory.getLimitedRecordsCommand(userCtx, Product.TABLE_NAME.toString())).thenReturn(command );
-		Search search = mock(Search.class);
-		when(command.getSearch()).thenReturn(search);
-		RecordResultSet recordSet = mock(RecordResultSet.class);
-		Record record = mock(Record.class);
-		StringValue stringValue = mock(StringValue.class);
-		when(record.getFieldValue(any(FieldId.class))).thenReturn(stringValue);
-		Record[] records = new Record[] {record };
-		when(recordSet.getRecords()).thenReturn(records );
-		when(command.getRecords()).thenReturn(recordSet);
-		ResultDefinitionEx resultDefinition = mock(ResultDefinitionEx.class);
-		when(command.getResultDefinition()).thenReturn(resultDefinition);
-		
 		Map<Product, String> parametrosBusqueda = new HashMap<Product, String>();
 		parametrosBusqueda.put(Product.FIELD_DESC_LARGA, "AR");
 		List<SubItem> products = buscador.findProducts(parametrosBusqueda);
@@ -73,6 +81,30 @@ public class BuscadorTest extends BaseMockitoTest {
 		verify(mockMdmConnection).getUserContext();
 		verify(mockCommandFactory).getLimitedRecordsCommand(eq(userCtx), anyString());
 		verify(itemFactory, times(2)).toItem(record);
+		//two for padre, one for hijo
+		verify(search, times(3)).addSearchItem(isA(SearchDimension.class), isA(SearchConstraint.class));
 	}
 	
+	@Test
+	public void shouldAddAllSearchParameters() throws Exception {
+		Map<Product, String> parametrosBusqueda = new HashMap<Product, String>();
+		parametrosBusqueda.put(Product.FIELD_DESC_LARGA, "AR");
+		parametrosBusqueda.put(Product.FIELD_EMPAQUE, "Caja");
+		parametrosBusqueda.put(Product.FIELD_NUMERO_MATERIAL, "234");
+		
+		buscador.findProducts(parametrosBusqueda);
+		//3 parameters, and 2 for being a father plus children
+		verify(search, times(5)).addSearchItem(isA(SearchDimension.class), isA(SearchConstraint.class));
+	}
+	
+	@Test
+	public void shouldAddTwoSearchParameters() throws Exception {
+		Map<Product, String> parametrosBusqueda = new HashMap<Product, String>();
+		parametrosBusqueda.put(Product.FIELD_EMPAQUE, "Caja");
+		parametrosBusqueda.put(Product.FIELD_NUMERO_MATERIAL, "234");
+		
+		buscador.findProducts(parametrosBusqueda);
+		//2 parameters, and 2 for being a father plus children
+		verify(search, times(4)).addSearchItem(isA(SearchDimension.class), isA(SearchConstraint.class));
+	}
 }
