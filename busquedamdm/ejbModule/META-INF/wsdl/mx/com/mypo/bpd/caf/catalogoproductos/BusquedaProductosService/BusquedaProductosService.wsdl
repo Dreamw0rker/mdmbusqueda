@@ -81,6 +81,8 @@
           <xsd:element minOccurs="0" name="presentacion" type="xsd:string"/>
           <xsd:element minOccurs="0" name="presentacionEmpaque" type="xsd:string"/>
           <xsd:element minOccurs="0" name="unidadMedida" type="xsd:string"/>
+          <xsd:element minOccurs="0" name="provedor" type="xsd:string"/>
+          <xsd:element minOccurs="0" name="categoria" type="xsd:string"/>
         </xsd:sequence>
       </xsd:complexType>
       <xsd:complexType name="ExchangeLogData">
@@ -131,10 +133,10 @@
     <wsdl:documentation/>
     <wsdl:operation name="buscarProductos">
       <wsdl:documentation/>
-      <!--<wsp:Policy>
-        <wsp:PolicyReference URI="#OP_buscarProductos"/>
-      </wsp:Policy>
-      --><wsdl:input message="p1:BusquedaProductosRequest"/>
+<!--      <wsp:Policy>-->
+<!--        <wsp:PolicyReference URI="#OP_buscarProductos"/>-->
+<!--      </wsp:Policy>-->
+      <wsdl:input message="p1:BusquedaProductosRequest"/>
       <wsdl:output message="p1:BusquedaProductosResponse"/>
       <wsdl:fault message="p1:BusquedaProductosFault" name="BusquedaProductosFault"/>
     </wsdl:operation>

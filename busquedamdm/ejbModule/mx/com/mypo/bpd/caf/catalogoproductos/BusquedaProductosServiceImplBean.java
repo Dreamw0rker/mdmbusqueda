@@ -39,8 +39,7 @@ public class BusquedaProductosServiceImplBean {
 		List<SubItem> products = new ArrayList<SubItem>();
 		Map<Product, String> paramsBuscar = assembleSearchParameters(busquedaProductosRequest);
 		try {
-			
-			products = buscador.findProducts(paramsBuscar);
+			products = buscador.findProducts(paramsBuscar, busquedaProductosRequest.getPartida());
 		} catch (MdmException e) {
 			handleException(e, "MDM Exception");
 		} catch (Exception e) {
@@ -61,7 +60,7 @@ public class BusquedaProductosServiceImplBean {
 	private Map<Product, String> assembleSearchParameters(BusquedaProductosQuery busquedaProductosRequest) {
 		Map<Product, String> paramsBuscar = new HashMap<Product, String>();
 		addParameterIfNecessary(paramsBuscar, 
-				busquedaProductosRequest.getDescripcion(), Product.FIELD_DESC_LARGA);
+				busquedaProductosRequest.getDescripcion(), Product.FIELD_DESC);
 		addParameterIfNecessary(paramsBuscar, 
 				busquedaProductosRequest.getClave(), Product.FIELD_NUMERO_MATERIAL);
 		addParameterIfNecessary(paramsBuscar, 

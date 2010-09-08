@@ -35,19 +35,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ExchangeFaultData }
+     * Create an instance of {@link BusquedaProductosFault }
      * 
      */
-    public ExchangeFaultData createExchangeFaultData() {
-        return new ExchangeFaultData();
+    public BusquedaProductosFault createBusquedaProductosFault() {
+        return new BusquedaProductosFault();
     }
 
     /**
-     * Create an instance of {@link ExchangeLogData }
+     * Create an instance of {@link BusquedaProductos.Productos }
      * 
      */
-    public ExchangeLogData createExchangeLogData() {
-        return new ExchangeLogData();
+    public BusquedaProductos.Productos createBusquedaProductosProductos() {
+        return new BusquedaProductos.Productos();
     }
 
     /**
@@ -59,6 +59,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link ExchangeFaultData }
+     * 
+     */
+    public ExchangeFaultData createExchangeFaultData() {
+        return new ExchangeFaultData();
+    }
+
+    /**
      * Create an instance of {@link BusquedaProductos }
      * 
      */
@@ -67,19 +75,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link BusquedaProductosFault }
+     * Create an instance of {@link ExchangeLogData }
      * 
      */
-    public BusquedaProductosFault createBusquedaProductosFault() {
-        return new BusquedaProductosFault();
-    }
-
-    /**
-     * Create an instance of {@link Item }
-     * 
-     */
-    public Item createItem() {
-        return new Item();
+    public ExchangeLogData createExchangeLogData() {
+        return new ExchangeLogData();
     }
 
     /**
@@ -91,11 +91,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link BusquedaProductos.Productos }
+     * Create an instance of {@link Item }
      * 
      */
-    public BusquedaProductos.Productos createBusquedaProductosProductos() {
-        return new BusquedaProductos.Productos();
+    public Item createItem() {
+        return new Item();
     }
 
     /**
