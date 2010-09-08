@@ -1,7 +1,9 @@
 package mx.com.mypo.bpd.caf.catalogoproductos;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -9,6 +11,7 @@ import javax.jws.WebService;
 
 import mx.com.mypo.bpd.caf.catalogoproductos.BusquedaProductos.Productos;
 
+import com.assa.mdm.data.Product;
 import com.assa.mdm.ejb.BuscadorLocal;
 import com.sap.engine.services.webservices.espbase.configuration.ann.dt.AuthenticationDT;
 import com.sap.engine.services.webservices.espbase.configuration.ann.dt.AuthenticationEnumsAuthenticationLevel;
@@ -34,8 +37,10 @@ public class BusquedaProductosServiceImplBean {
 	@RelMessagingNW05DTOperation(enableWSRM=false)
 	public  mx.com.mypo.bpd.caf.catalogoproductos.BusquedaProductos buscarProductos(mx.com.mypo.bpd.caf.catalogoproductos.BusquedaProductosQuery busquedaProductosRequest)throws mx.com.mypo.bpd.caf.catalogoproductos.BusquedaProductosFault_Exception {
 		List<SubItem> products = new ArrayList<SubItem>();
+		Map<Product, String> paramsBuscar = assembleSearchParameters(busquedaProductosRequest);
 		try {
-			products = buscador.findProducts(busquedaProductosRequest.getDescripcion());
+			
+			products = buscador.findProducts(paramsBuscar);
 		} catch (MdmException e) {
 			handleException(e, "MDM Exception");
 		} catch (Exception e) {
@@ -51,6 +56,23 @@ public class BusquedaProductosServiceImplBean {
 		}
 		
 		return busquedaProductos;
+	}
+
+	private Map<Product, String> assembleSearchParameters(BusquedaProductosQuery busquedaProductosRequest) {
+		Map<Product, String> paramsBuscar = new HashMap<Product, String>();
+		addParameterIfNecessary(paramsBuscar, 
+				busquedaProductosRequest.getDescripcion(), Product.FIELD_DESC_LARGA);
+		addParameterIfNecessary(paramsBuscar, 
+				busquedaProductosRequest.getClave(), Product.FIELD_NUMERO_MATERIAL);
+		addParameterIfNecessary(paramsBuscar, 
+				busquedaProductosRequest.getEmpaque(), Product.FIELD_EMPAQUE);
+		return paramsBuscar;
+	}
+
+	private void addParameterIfNecessary(Map<Product, String> paramsBuscar, String valor, Product param) {
+		if (valor != null) {
+			paramsBuscar.put(param, valor);
+		}
 	}
 
 	private void handleException(Exception e, String type) throws BusquedaProductosFault_Exception {
