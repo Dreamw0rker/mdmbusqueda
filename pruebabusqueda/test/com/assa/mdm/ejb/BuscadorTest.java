@@ -9,7 +9,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import mx.com.mypo.bpd.caf.catalogoproductos.SubItem;
 
@@ -63,7 +65,9 @@ public class BuscadorTest extends BaseMockitoTest {
 		ResultDefinitionEx resultDefinition = mock(ResultDefinitionEx.class);
 		when(command.getResultDefinition()).thenReturn(resultDefinition);
 		
-		List<SubItem> products = buscador.findProducts("AR");
+		Map<Product, String> parametrosBusqueda = new HashMap<Product, String>();
+		parametrosBusqueda.put(Product.FIELD_DESC_LARGA, "AR");
+		List<SubItem> products = buscador.findProducts(parametrosBusqueda);
 		assertEquals(1, products.size());
 		
 		verify(mockMdmConnection).getUserContext();
