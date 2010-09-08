@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 
@@ -51,12 +52,12 @@ public class Buscador implements BuscadorLocal {
 	private ItemFactory itemFactory = new ItemFactory();
 
 	@Override
-	public List<SubItem> findProducts(String name) throws MdmException {
+	public List<SubItem> findProducts(Map<Product, String> parametrosBusqueda) throws MdmException {
 		UserSessionContext userCtx = mdmConnection.getUserContext();
 		List<Product> products = initializeFields(userCtx);
 		
 		RetrieveLimitedRecordsCommand limitedRecordsCommand = 
-			getAndConfigureCommand(name, userCtx, products);
+			getAndConfigureCommand(parametrosBusqueda.get(Product.FIELD_DESC_LARGA), userCtx, products);
 		
 		return extractSubitems(limitedRecordsCommand);
 	}
