@@ -50,14 +50,14 @@ public class Buscador implements BuscadorLocal {
 	private ItemFactory itemFactory = new ItemFactory();
 
 	@Override
-	public List<SubItem> findProducts(Map<Product, String> parametrosBusqueda) throws MdmException {
+	public List<SubItem> findProducts(Map<Product, String> parametrosBusqueda, String partida) throws MdmException {
 		UserSessionContext userCtx = mdmConnection.getUserContext();
 		List<Product> products = initializeFields(userCtx);
 		
-		RetrieveLimitedRecordsCommand limitedRecordsCommand = 
-			getAndConfigureCommand(parametrosBusqueda, userCtx, products);
+		RetrieveLimitedRecordsCommand limitedRecordsCommand = getAndConfigureCommand(parametrosBusqueda, 
+				userCtx, products);
 		
-		return extractSubitems(limitedRecordsCommand);
+		return extractSubitems(limitedRecordsCommand, partida);
 	}
 
 	private RetrieveLimitedRecordsCommand getAndConfigureCommand(Map<Product, String> parametrosBusqueda, UserSessionContext userCtx, 
@@ -69,10 +69,10 @@ public class Buscador implements BuscadorLocal {
 			resultDefinition.addSelectField(product.toString());
 		}
 		Search search = limitedRecordsCommand.getSearch();
-		if (parametrosBusqueda.containsKey(Product.FIELD_DESC_LARGA)) {
+		if (parametrosBusqueda.containsKey(Product.FIELD_DESC)) {
 			search.addSearchItem(new KeywordSearchDimension(), new KeywordSearchConstraint(parametrosBusqueda.get(
-					Product.FIELD_DESC_LARGA), KeywordSearchConstraint.CONTAINS));
-			parametrosBusqueda.remove(Product.FIELD_DESC_LARGA);
+					Product.FIELD_DESC), KeywordSearchConstraint.CONTAINS));
+			parametrosBusqueda.remove(Product.FIELD_DESC);
 		}
 		for (Product product : parametrosBusqueda.keySet()) {
 			search.addSearchItem(new FieldSearchDimension(product.getFieldId()), new TextSearchConstraint(
@@ -84,7 +84,7 @@ public class Buscador implements BuscadorLocal {
 		return limitedRecordsCommand;
 	}
 
-	private List<SubItem> extractSubitems(RetrieveLimitedRecordsCommand limitedRecordsCommand) 
+	private List<SubItem> extractSubitems(RetrieveLimitedRecordsCommand limitedRecordsCommand, String partida) 
 		throws CommandException {
 		List<SubItem> result = new ArrayList<SubItem>();
 		Record[] records = getResultRecords(limitedRecordsCommand);
@@ -93,12 +93,14 @@ public class Buscador implements BuscadorLocal {
 			loc.debugT(record.getLookupDisplayValue(Product.FIELD_TIPO_MATERIAL.getFieldId()));
 			SubItem subitem = new SubItem();
 			result.add(subitem);
-			subitem.setItemPadre(itemFactory.toItem(record));
+			Item padre = itemFactory.toItemPadre(record);
+			padre.setPartida(partida);
+			subitem.setItemPadre(padre);
 			Collection<? extends Record> childRecords = addChildRecords(record, limitedRecordsCommand);
 			List<Item> subItems = subitem.getSubItems();
 			loc.debugT("Children: " + childRecords.size());
 			for (Record child : childRecords) {
-				subItems.add(itemFactory.toItem(child));
+				subItems.add(itemFactory.toItemPadre(child));
 			}
 		}
 		return result;

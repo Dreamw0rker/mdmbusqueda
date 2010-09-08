@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="presentacion" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="presentacionEmpaque" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="unidadMedida" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="provedor" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="categoria" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -40,7 +42,9 @@ import javax.xml.bind.annotation.XmlType;
     "pmr",
     "presentacion",
     "presentacionEmpaque",
-    "unidadMedida"
+    "unidadMedida",
+    "provedor",
+    "categoria"
 })
 public class Item {
 
@@ -52,6 +56,8 @@ public class Item {
     protected String presentacion;
     protected String presentacionEmpaque;
     protected String unidadMedida;
+    protected String provedor;
+    protected String categoria;
 
     /**
      * Gets the value of the claveProducto property.
@@ -219,6 +225,54 @@ public class Item {
      */
     public void setUnidadMedida(String value) {
         this.unidadMedida = value;
+    }
+
+    /**
+     * Gets the value of the provedor property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getProvedor() {
+        return provedor;
+    }
+
+    /**
+     * Sets the value of the provedor property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setProvedor(String value) {
+        this.provedor = value;
+    }
+
+    /**
+     * Gets the value of the categoria property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCategoria() {
+        return categoria;
+    }
+
+    /**
+     * Sets the value of the categoria property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCategoria(String value) {
+        this.categoria = value;
     }
 
 }

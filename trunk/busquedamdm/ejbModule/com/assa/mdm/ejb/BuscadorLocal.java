@@ -13,6 +13,6 @@ import com.sap.mdm.MdmException;
 
 @Local
 public interface BuscadorLocal {
-	List<SubItem> findProducts(Map<Product, String> parametrosBusqueda) throws MdmException;
+	List<SubItem> findProducts(Map<Product, String> parametrosBusqueda, String partida) throws MdmException;
 	
 }
