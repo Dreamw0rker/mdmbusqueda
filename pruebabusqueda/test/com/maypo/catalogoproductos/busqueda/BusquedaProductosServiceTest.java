@@ -46,7 +46,7 @@ public class BusquedaProductosServiceTest extends BaseMockitoTest {
 	private Map<Product, String> executeTest() throws BusquedaProductosFault_Exception, MdmException {
 		busquedaService.buscarProductos(busquedaProductosRequest);
 		ArgumentCaptor<Map> busquedaMap = ArgumentCaptor.forClass(Map.class);
-		verify(buscador).findProducts(busquedaMap.capture(), busquedaProductosRequest.getPartida());
+		verify(buscador).findProducts(busquedaMap.capture(), eq(busquedaProductosRequest.getPartida()));
 		Map<Product, String> parametrosBusqueda = busquedaMap.getValue();
 		return parametrosBusqueda;
 	}
