@@ -8,6 +8,13 @@ package mx.com.mypo.bpd.caf.catalogoproductos;
 public interface BusquedaProductosService {
 
   /**
+   * Java representation of web method [buscarProductosAuto].
+   */
+  @javax.jws.WebMethod(operationName = "buscarProductosAuto", action = "http://sap.com/xi/WebService/soap1.1")
+  @javax.jws.WebResult(name = "BusquedaProductosResponse", targetNamespace = "http://mypo.com.mx/BPD/CAF/CatalogoProductos", partName = "BusquedaProductosResponse")
+  public mx.com.mypo.bpd.caf.catalogoproductos.BusquedaProductos buscarProductosAuto(@javax.jws.WebParam(name = "BusquedaAutomaticaRequest", targetNamespace = "http://mypo.com.mx/BPD/CAF/CatalogoProductos", partName = "BusquedaAutomaticaRequest") mx.com.mypo.bpd.caf.catalogoproductos.BusquedaAutomaticaQuery busquedaAutomaticaRequest) throws mx.com.mypo.bpd.caf.catalogoproductos.BusquedaProductosFault_Exception;
+
+  /**
    * Java representation of web method [buscarProductos].
    */
   @javax.jws.WebMethod(operationName = "buscarProductos", action = "http://sap.com/xi/WebService/soap1.1")
