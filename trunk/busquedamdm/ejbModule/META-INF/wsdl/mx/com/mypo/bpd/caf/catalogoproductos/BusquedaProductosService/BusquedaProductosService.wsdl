@@ -4,7 +4,7 @@
   <wsp:UsingPolicy wsdl:required="true"/>
   <ifw:properties xmlns:ifw="urn:com-sap:ifr:v2:wsdl">
     <ifw:category>ifmmessif</ifw:category>
-    <ifw:VersionID>983f8801951011df9b56000c296b9eee</ifw:VersionID>
+    <ifw:VersionID>6562b980bc3d11dfa683000c296b9eee</ifw:VersionID>
     <ifw:lifeCycleInfo>
       <objectState/>
     </ifw:lifeCycleInfo>
@@ -17,6 +17,16 @@
     </ifw:classifications>
     <ifw:additionalAttributes/>
     <ifw:methods>
+      <ifw:method name="buscarProductosAuto">
+        <ifw:isSynchron>true</ifw:isSynchron>
+        <ifw:isIdempotent>false</ifw:isIdempotent>
+        <ifw:isInbound>true</ifw:isInbound>
+        <ifw:interfaceCategory>inbound</ifw:interfaceCategory>
+        <ifw:communicationProfile uri="prf_dt_op_com_sync"/>
+        <ifw:lifeCycleInfo>
+          <objectState/>
+        </ifw:lifeCycleInfo>
+      </ifw:method>
       <ifw:method name="buscarProductos">
         <ifw:isSynchron>true</ifw:isSynchron>
         <ifw:isIdempotent>false</ifw:isIdempotent>
@@ -34,19 +44,25 @@
         <ifw:technicalNamespace>http://mypo.com.mx/BPD/CAF/CatalogoProductos</ifw:technicalNamespace>
         <ifw:VersionID>60f59701950f11df8b23000c296b9eee</ifw:VersionID>
       </ifw:message>
-      <ifw:message name="BusquedaProductosFault">
-        <ifw:messType>ifmfaultm</ifw:messType>
+      <ifw:message name="BusquedaAutomaticaRequest">
+        <ifw:messType>ifmmessage</ifw:messType>
         <ifw:technicalNamespace>http://mypo.com.mx/BPD/CAF/CatalogoProductos</ifw:technicalNamespace>
-        <ifw:VersionID>7d713231951011df96bb000c296b9eee</ifw:VersionID>
+        <ifw:VersionID>56dc9a61bc3911dfcfeb000c296b9eee</ifw:VersionID>
       </ifw:message>
       <ifw:message name="BusquedaProductosRequest">
         <ifw:messType>ifmmessage</ifw:messType>
         <ifw:technicalNamespace>http://mypo.com.mx/BPD/CAF/CatalogoProductos</ifw:technicalNamespace>
         <ifw:VersionID>2da46201950f11df8608000c296b9eee</ifw:VersionID>
       </ifw:message>
+      <ifw:message name="BusquedaProductosFault">
+        <ifw:messType>ifmfaultm</ifw:messType>
+        <ifw:technicalNamespace>http://mypo.com.mx/BPD/CAF/CatalogoProductos</ifw:technicalNamespace>
+        <ifw:VersionID>7d713231951011df96bb000c296b9eee</ifw:VersionID>
+      </ifw:message>
     </ifw:messages>
     <ifw:matchingInterfaces/>
   </ifw:properties>
+  <wsp:Policy wsu:Id="OP_buscarProductosAuto"/>
   <wsp:Policy wsu:Id="OP_buscarProductos"/>
   <wsdl:types>
     <xsd:schema xmlns="http://mypo.com.mx/BPD/CAF/CatalogoProductos" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://mypo.com.mx/BPD/CAF/CatalogoProductos">
@@ -59,6 +75,12 @@
       </xsd:element>
       <xsd:element name="BusquedaProductosRequest" type="BusquedaProductosQuery"/>
       <xsd:element name="BusquedaProductosResponse" type="BusquedaProductos"/>
+      <xsd:element name="BusquedaAutomaticaRequest" type="BusquedaAutomaticaQuery"/>
+      <xsd:complexType name="BusquedaAutomaticaQuery">
+        <xsd:sequence>
+          <xsd:element maxOccurs="unbounded" name="criterias" type="BusquedaAutomaticaCriteria"/>
+        </xsd:sequence>
+      </xsd:complexType>
       <xsd:complexType name="SubItem">
         <xsd:sequence>
           <xsd:element name="itemPadre" type="Item"/>
@@ -72,6 +94,16 @@
           <xsd:element maxOccurs="unbounded" minOccurs="0" name="faultDetail" type="ExchangeLogData"/>
         </xsd:sequence>
       </xsd:complexType>
+      <xsd:complexType name="BusquedaAutomaticaCriteria">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="clave" type="xsd:string"/>
+          <xsd:element minOccurs="0" name="descripcion" type="xsd:string"/>
+          <xsd:element name="partida" type="xsd:string"/>
+          <xsd:element minOccurs="0" name="cantidad" type="xsd:integer"/>
+          <xsd:element minOccurs="0" name="unidadMedida" type="xsd:string"/>
+          <xsd:element minOccurs="0" name="presentacion" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
       <xsd:complexType name="Item">
         <xsd:sequence>
           <xsd:element minOccurs="0" name="claveProducto" type="xsd:string"/>
@@ -80,6 +112,7 @@
           <xsd:element minOccurs="0" name="PMR" type="xsd:string"/>
           <xsd:element minOccurs="0" name="presentacion" type="xsd:string"/>
           <xsd:element minOccurs="0" name="presentacionEmpaque" type="xsd:string"/>
+          <xsd:element minOccurs="0" name="cantidad" type="xsd:integer"/>
           <xsd:element minOccurs="0" name="unidadMedida" type="xsd:string"/>
           <xsd:element minOccurs="0" name="provedor" type="xsd:string"/>
           <xsd:element minOccurs="0" name="categoria" type="xsd:string"/>
@@ -97,9 +130,11 @@
         <xsd:sequence>
           <xsd:element name="partida" type="xsd:string"/>
           <xsd:element minOccurs="0" name="clave" type="xsd:string"/>
+          <xsd:element minOccurs="0" name="descripcion" type="xsd:string"/>
+          <xsd:element minOccurs="0" name="cantidad" type="xsd:integer"/>
+          <xsd:element minOccurs="0" name="unidadMedida" type="xsd:string"/>
           <xsd:element minOccurs="0" name="sustanciaActiva" type="xsd:string"/>
           <xsd:element minOccurs="0" name="formaFarmaceutica" type="xsd:string"/>
-          <xsd:element minOccurs="0" name="descripcion" type="xsd:string"/>
           <xsd:element minOccurs="0" name="concentracion" type="xsd:string"/>
           <xsd:element minOccurs="0" name="empaque" type="xsd:string"/>
         </xsd:sequence>
@@ -117,6 +152,10 @@
       </xsd:complexType>
     </xsd:schema>
   </wsdl:types>
+  <wsdl:message name="BusquedaAutomaticaRequest">
+    <wsdl:documentation/>
+    <wsdl:part element="p1:BusquedaAutomaticaRequest" name="BusquedaAutomaticaRequest"/>
+  </wsdl:message>
   <wsdl:message name="BusquedaProductosRequest">
     <wsdl:documentation/>
     <wsdl:part element="p1:BusquedaProductosRequest" name="BusquedaProductosRequest"/>
@@ -131,18 +170,39 @@
   </wsdl:message>
   <wsdl:portType name="BusquedaProductosService">
     <wsdl:documentation/>
+    <wsdl:operation name="buscarProductosAuto">
+      <wsdl:documentation/><!--
+      <wsp:Policy>
+        <wsp:PolicyReference URI="#OP_buscarProductosAuto"/>
+      </wsp:Policy>
+      --><wsdl:input message="p1:BusquedaAutomaticaRequest"/>
+      <wsdl:output message="p1:BusquedaProductosResponse"/>
+      <wsdl:fault message="p1:BusquedaProductosFault" name="BusquedaProductosFault"/>
+    </wsdl:operation>
     <wsdl:operation name="buscarProductos">
       <wsdl:documentation/>
-<!--      <wsp:Policy>-->
-<!--        <wsp:PolicyReference URI="#OP_buscarProductos"/>-->
-<!--      </wsp:Policy>-->
-      <wsdl:input message="p1:BusquedaProductosRequest"/>
+      <!--<wsp:Policy>
+        <wsp:PolicyReference URI="#OP_buscarProductos"/>
+      </wsp:Policy>
+      --><wsdl:input message="p1:BusquedaProductosRequest"/>
       <wsdl:output message="p1:BusquedaProductosResponse"/>
       <wsdl:fault message="p1:BusquedaProductosFault" name="BusquedaProductosFault"/>
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="BusquedaProductosServiceBinding" type="p1:BusquedaProductosService">
     <soap:binding xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="buscarProductosAuto">
+      <soap:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" soapAction="http://sap.com/xi/WebService/soap1.1"/>
+      <wsdl:input>
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="BusquedaProductosFault">
+        <soap:fault xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="BusquedaProductosFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
     <wsdl:operation name="buscarProductos">
       <soap:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" soapAction="http://sap.com/xi/WebService/soap1.1"/>
       <wsdl:input>

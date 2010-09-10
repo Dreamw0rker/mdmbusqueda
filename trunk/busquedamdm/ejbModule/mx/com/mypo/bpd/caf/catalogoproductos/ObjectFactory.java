@@ -25,6 +25,7 @@ import javax.xml.namespace.QName;
 public class ObjectFactory {
 
     private final static QName _BusquedaProductosResponse_QNAME = new QName("http://mypo.com.mx/BPD/CAF/CatalogoProductos", "BusquedaProductosResponse");
+    private final static QName _BusquedaAutomaticaRequest_QNAME = new QName("http://mypo.com.mx/BPD/CAF/CatalogoProductos", "BusquedaAutomaticaRequest");
     private final static QName _BusquedaProductosRequest_QNAME = new QName("http://mypo.com.mx/BPD/CAF/CatalogoProductos", "BusquedaProductosRequest");
 
     /**
@@ -32,22 +33,6 @@ public class ObjectFactory {
      * 
      */
     public ObjectFactory() {
-    }
-
-    /**
-     * Create an instance of {@link BusquedaProductosFault }
-     * 
-     */
-    public BusquedaProductosFault createBusquedaProductosFault() {
-        return new BusquedaProductosFault();
-    }
-
-    /**
-     * Create an instance of {@link BusquedaProductos.Productos }
-     * 
-     */
-    public BusquedaProductos.Productos createBusquedaProductosProductos() {
-        return new BusquedaProductos.Productos();
     }
 
     /**
@@ -59,19 +44,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ExchangeFaultData }
+     * Create an instance of {@link BusquedaProductos.Productos }
      * 
      */
-    public ExchangeFaultData createExchangeFaultData() {
-        return new ExchangeFaultData();
+    public BusquedaProductos.Productos createBusquedaProductosProductos() {
+        return new BusquedaProductos.Productos();
     }
 
     /**
-     * Create an instance of {@link BusquedaProductos }
+     * Create an instance of {@link BusquedaAutomaticaCriteria }
      * 
      */
-    public BusquedaProductos createBusquedaProductos() {
-        return new BusquedaProductos();
+    public BusquedaAutomaticaCriteria createBusquedaAutomaticaCriteria() {
+        return new BusquedaAutomaticaCriteria();
     }
 
     /**
@@ -99,12 +84,53 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link ExchangeFaultData }
+     * 
+     */
+    public ExchangeFaultData createExchangeFaultData() {
+        return new ExchangeFaultData();
+    }
+
+    /**
+     * Create an instance of {@link BusquedaAutomaticaQuery }
+     * 
+     */
+    public BusquedaAutomaticaQuery createBusquedaAutomaticaQuery() {
+        return new BusquedaAutomaticaQuery();
+    }
+
+    /**
+     * Create an instance of {@link BusquedaProductosFault }
+     * 
+     */
+    public BusquedaProductosFault createBusquedaProductosFault() {
+        return new BusquedaProductosFault();
+    }
+
+    /**
+     * Create an instance of {@link BusquedaProductos }
+     * 
+     */
+    public BusquedaProductos createBusquedaProductos() {
+        return new BusquedaProductos();
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BusquedaProductos }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://mypo.com.mx/BPD/CAF/CatalogoProductos", name = "BusquedaProductosResponse")
     public JAXBElement<BusquedaProductos> createBusquedaProductosResponse(BusquedaProductos value) {
         return new JAXBElement<BusquedaProductos>(_BusquedaProductosResponse_QNAME, BusquedaProductos.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link BusquedaAutomaticaQuery }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://mypo.com.mx/BPD/CAF/CatalogoProductos", name = "BusquedaAutomaticaRequest")
+    public JAXBElement<BusquedaAutomaticaQuery> createBusquedaAutomaticaRequest(BusquedaAutomaticaQuery value) {
+        return new JAXBElement<BusquedaAutomaticaQuery>(_BusquedaAutomaticaRequest_QNAME, BusquedaAutomaticaQuery.class, null, value);
     }
 
     /**

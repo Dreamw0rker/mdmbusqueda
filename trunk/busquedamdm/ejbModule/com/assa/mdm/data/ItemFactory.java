@@ -1,6 +1,8 @@
 package com.assa.mdm.data;
 
+import mx.com.mypo.bpd.caf.catalogoproductos.DatosEntrada;
 import mx.com.mypo.bpd.caf.catalogoproductos.Item;
+import mx.com.mypo.bpd.caf.catalogoproductos.SubItem;
 
 import com.sap.mdm.data.Record;
 import com.sap.mdm.ids.FieldId;
@@ -28,6 +30,19 @@ public class ItemFactory {
 		item.setProvedor(stringValue.getString());
 		item.setCategoria(product.getLookupDisplayValue(Product.FIELD_CATEGORIA.getFieldId()));
 		return item;
+	}
+
+	public void addDatosEntrada(SubItem subItem, DatosEntrada datosEntrada) {
+		copyDatosEntradaAItem(datosEntrada, subItem.getItemPadre());
+		for (Item hijo : subItem.getSubItems()) {
+			copyDatosEntradaAItem(datosEntrada, hijo);
+		}
+	}
+
+	private void copyDatosEntradaAItem(DatosEntrada datosEntrada, Item item) {
+		item.setCantidad(datosEntrada.cantidad);
+		item.setPartida(datosEntrada.partida);
+		item.setUnidadMedida(datosEntrada.unidadMedida);
 	}
 
 }

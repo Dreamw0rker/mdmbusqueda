@@ -1,6 +1,7 @@
 
 package mx.com.mypo.bpd.caf.catalogoproductos;
 
+import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -23,6 +24,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="PMR" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="presentacion" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="presentacionEmpaque" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="cantidad" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0"/>
  *         &lt;element name="unidadMedida" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="provedor" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="categoria" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
@@ -42,6 +44,7 @@ import javax.xml.bind.annotation.XmlType;
     "pmr",
     "presentacion",
     "presentacionEmpaque",
+    "cantidad",
     "unidadMedida",
     "provedor",
     "categoria"
@@ -55,6 +58,7 @@ public class Item {
     protected String pmr;
     protected String presentacion;
     protected String presentacionEmpaque;
+    protected BigInteger cantidad;
     protected String unidadMedida;
     protected String provedor;
     protected String categoria;
@@ -201,6 +205,30 @@ public class Item {
      */
     public void setPresentacionEmpaque(String value) {
         this.presentacionEmpaque = value;
+    }
+
+    /**
+     * Gets the value of the cantidad property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link BigInteger }
+     *     
+     */
+    public BigInteger getCantidad() {
+        return cantidad;
+    }
+
+    /**
+     * Sets the value of the cantidad property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link BigInteger }
+     *     
+     */
+    public void setCantidad(BigInteger value) {
+        this.cantidad = value;
     }
 
     /**
