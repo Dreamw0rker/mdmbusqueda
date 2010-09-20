@@ -5,6 +5,7 @@ import static org.mockito.Mockito.*;
 
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +22,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
+import com.assa.mdm.data.Atributo;
 import com.assa.mdm.data.ItemFactory;
 import com.assa.mdm.data.Product;
 import com.assa.mdm.ejb.BuscadorLocal;
@@ -54,7 +56,7 @@ public class BusquedaProductosServiceTest extends BaseMockitoTest {
 	private SubItem subItemsFound() throws MdmException {
 		SubItem subItem = mock(SubItem.class);
 		List<SubItem> subItems = Arrays.asList(new SubItem[] {subItem});
-		when(buscador.findProducts(anyMap(), anyString())).thenReturn(subItems);
+		when(buscador.findProducts(anyMap(), anyMap())).thenReturn(subItems);
 		return subItem;
 	}
 
@@ -67,7 +69,7 @@ public class BusquedaProductosServiceTest extends BaseMockitoTest {
 	private Map<Product, String> executeTest() throws BusquedaProductosFault_Exception, MdmException {
 		busquedaService.buscarProductos(busquedaProductosRequest);
 		ArgumentCaptor<Map> busquedaMap = ArgumentCaptor.forClass(Map.class);
-		verify(buscador).findProducts(busquedaMap.capture(), eq(busquedaProductosRequest.getPartida()));
+		verify(buscador).findProducts(busquedaMap.capture(), anyMap());
 		Map<Product, String> parametrosBusqueda = busquedaMap.getValue();
 		return parametrosBusqueda;
 	}
@@ -102,7 +104,7 @@ public class BusquedaProductosServiceTest extends BaseMockitoTest {
 	@Test(expected=BusquedaProductosFault_Exception.class)
 	public void shouldThrowBusquedaFaultExcepcion() throws Exception {
 		busquedaProductosRequest.setDescripcion(descripcion);
-		when(buscador.findProducts(isA(Map.class), anyString())).thenThrow(new MdmException());
+		when(buscador.findProducts(anyMap(), anyMap())).thenThrow(new MdmException());
 		
 		busquedaService.buscarProductos(busquedaProductosRequest);
 	}
@@ -120,12 +122,37 @@ public class BusquedaProductosServiceTest extends BaseMockitoTest {
 		
 		busquedaService.buscarProductosAuto(busquedaAutomaticaRequest);
 		
-		verify(buscador).findProducts(anyMap(), anyString());
+		verify(buscador).findProducts(anyMap(), anyMap());
 		ArgumentCaptor<DatosEntrada> datosEntradaArgument = ArgumentCaptor.forClass(DatosEntrada.class);
 		verify(itemFactory).addDatosEntrada(eq(subItem), datosEntradaArgument.capture());
 		DatosEntrada datoEntrada = datosEntradaArgument.getValue();
 		assertEquals(cantidad, datoEntrada.cantidad);
-		assertEquals(partida, datoEntrada.partida);
+		assertEquals(partida, datoEntrada.partida);	
+	}
+	
+	@Test
+	public void shouldCallBusquedaWithSubstanciaActiva() throws Exception {
+		busquedaProductosRequest.setSustanciaActiva("Zixlon");
 		
+		busquedaService.buscarProductos(busquedaProductosRequest);
+		
+		ArgumentCaptor<Map> parametrosMapBusqueda = ArgumentCaptor.forClass(Map.class);
+		verify(buscador).findProducts(eq(new HashMap<Product, String>()), parametrosMapBusqueda.capture());
+		Map<Atributo, String> parametrosMap = parametrosMapBusqueda.getValue();
+		assertEquals(1, parametrosMap.size());
+		assertTrue(parametrosMap.containsKey(Atributo.SUBSTANCIA_ACTIVA));
+	}
+	
+	@Test
+	public void shouldCallBusquedaWithVariousCategorias() throws Exception {
+		busquedaProductosRequest.setSustanciaActiva("Zixlon");
+		busquedaProductosRequest.setConcentracion("50 mg");
+		
+		busquedaService.buscarProductos(busquedaProductosRequest);
+		
+		ArgumentCaptor<Map> parametrosMapBusqueda = ArgumentCaptor.forClass(Map.class);
+		verify(buscador).findProducts(eq(new HashMap<Product, String>()), parametrosMapBusqueda.capture());
+		Map<Atributo, String> parametrosMap = parametrosMapBusqueda.getValue();
+		assertEquals(2, parametrosMap.size());
 	}
 }
