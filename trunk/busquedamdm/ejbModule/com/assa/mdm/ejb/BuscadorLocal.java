@@ -7,12 +7,13 @@ import javax.ejb.Local;
 
 import mx.com.mypo.bpd.caf.catalogoproductos.SubItem;
 
+import com.assa.mdm.data.Atributo;
 import com.assa.mdm.data.Product;
 import com.sap.mdm.MdmException;
 
 
 @Local
 public interface BuscadorLocal {
-	List<SubItem> findProducts(Map<Product, String> parametrosBusqueda, String partida) throws MdmException;
+	List<SubItem> findProducts(Map<Product, String> parametrosBusqueda, Map<Atributo,String> atributos) throws MdmException;
 	
 }

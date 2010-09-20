@@ -11,6 +11,7 @@ import javax.jws.WebService;
 
 import mx.com.mypo.bpd.caf.catalogoproductos.BusquedaProductos.Productos;
 
+import com.assa.mdm.data.Atributo;
 import com.assa.mdm.data.ItemFactory;
 import com.assa.mdm.data.Product;
 import com.assa.mdm.ejb.BuscadorLocal;
@@ -43,8 +44,9 @@ public class BusquedaProductosServiceImplBean {
 			mx.com.mypo.bpd.caf.catalogoproductos.BusquedaProductosQuery busquedaProductosRequest)
 			throws mx.com.mypo.bpd.caf.catalogoproductos.BusquedaProductosFault_Exception {
 		List<SubItem> products = new ArrayList<SubItem>();
-		Map<Product, String> paramsBuscar = assembleSearchParameters(busquedaProductosRequest);
-		products = executeBusqueda(busquedaProductosRequest.getPartida(), paramsBuscar);
+		Map<Product, String> paramsProduct = assembleSearchParameters(busquedaProductosRequest);
+		Map<Atributo, String> paramsAtributos = assembleAttributeParameters(busquedaProductosRequest);
+		products = executeBusqueda(paramsProduct, paramsAtributos);
 		loc.debugT("Products found: " + products.size());
 
 		DatosEntrada datosEntrada = new DatosEntrada(busquedaProductosRequest.getPartida(), 
@@ -59,10 +61,10 @@ public class BusquedaProductosServiceImplBean {
 		}
 	}
 
-	private List<SubItem> executeBusqueda(String partida, Map<Product, String> paramsBuscar)
+	private List<SubItem> executeBusqueda(Map<Product, String> paramsBuscar, Map<Atributo, String> paramsAtributos)
 			throws BusquedaProductosFault_Exception {
 		try {
-			return buscador.findProducts(paramsBuscar, partida);
+			return buscador.findProducts(paramsBuscar, paramsAtributos);
 		} catch (MdmException e) {
 			handleException(e, "MDM Exception");
 		} catch (Exception e) {
@@ -90,7 +92,7 @@ public class BusquedaProductosServiceImplBean {
 		List<BusquedaAutomaticaCriteria> criterias = busquedaAutomaticaRequest.getCriterias();
 		for (BusquedaAutomaticaCriteria busquedaCriteria : criterias) {
 			Map<Product, String> paramsBuscar = assembleSearchParameters(busquedaCriteria);
-			List<SubItem> subitems = executeBusqueda(busquedaCriteria.getPartida(), paramsBuscar);
+			List<SubItem> subitems = executeBusqueda(paramsBuscar);
 			DatosEntrada datosEntrada = new DatosEntrada(busquedaCriteria.getPartida(), 
 					busquedaCriteria.getUnidadMedida(), busquedaCriteria.getCantidad());
 			addInputParameters(subitems, datosEntrada);
@@ -98,6 +100,10 @@ public class BusquedaProductosServiceImplBean {
 		}
 
 		return mapToBusquedaProductos(products);
+	}
+
+	private List<SubItem> executeBusqueda(Map<Product, String> paramsBuscar) throws BusquedaProductosFault_Exception {
+		return executeBusqueda(paramsBuscar, new HashMap<Atributo, String>());
 	}
 
 	private Map<Product, String> assembleSearchParameters(BusquedaAutomaticaCriteria busquedaAutomaticaCriteria) {
@@ -115,11 +121,21 @@ public class BusquedaProductosServiceImplBean {
 		addParameterIfNecessary(paramsBuscar, busquedaProductosRequest.getEmpaque(), Product.FIELD_EMPAQUE);
 		return paramsBuscar;
 	}
+	
+	private Map<Atributo, String> assembleAttributeParameters(BusquedaProductosQuery busquedaProductosRequest) {
+		Map<Atributo, String> atributos = new HashMap<Atributo, String>();
+		addParameterIfNecessary(atributos, busquedaProductosRequest.getSustanciaActiva(), 
+				Atributo.SUBSTANCIA_ACTIVA);
+		addParameterIfNecessary(atributos, busquedaProductosRequest.getConcentracion(), Atributo.CONCENTRACION);
+		return atributos;
+	}
 
-	private void addParameterIfNecessary(Map<Product, String> paramsBuscar, String valor, Product param) {
+	@SuppressWarnings("unchecked")
+	private void addParameterIfNecessary(Map map, String valor, Object atributo) {
 		if (valor != null) {
-			paramsBuscar.put(param, valor);
+			map.put(atributo, valor);
 		}
+		
 	}
 
 	private void handleException(Exception e, String type) throws BusquedaProductosFault_Exception {
