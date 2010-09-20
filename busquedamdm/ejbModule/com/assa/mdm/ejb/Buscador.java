@@ -23,11 +23,13 @@ import com.sap.mdm.data.Record;
 import com.sap.mdm.data.RecordResultSet;
 import com.sap.mdm.data.commands.RetrieveLimitedRecordsCommand;
 import com.sap.mdm.extension.data.ResultDefinitionEx;
+import com.sap.mdm.schema.AttributeProperties;
 import com.sap.mdm.search.AttributeSearchDimension;
 import com.sap.mdm.search.FieldSearchDimension;
 import com.sap.mdm.search.KeywordSearchConstraint;
 import com.sap.mdm.search.KeywordSearchDimension;
 import com.sap.mdm.search.Search;
+import com.sap.mdm.search.SearchDimension;
 import com.sap.mdm.search.TextSearchConstraint;
 import com.sap.mdm.session.UserSessionContext;
 import com.sap.mdm.valuetypes.StringValue;
@@ -52,24 +54,36 @@ public class Buscador implements BuscadorLocal {
 	private ItemFactory itemFactory = new ItemFactory();
 
 	@Override
-	public List<SubItem> findProducts(Map<Product, String> parametrosBusqueda, String partida) throws MdmException {
+	public List<SubItem> findProducts(Map<Product, String> parametrosBusqueda, Map<Atributo,String> atributos) throws MdmException {
 		UserSessionContext userCtx = mdmConnection.getUserContext();
-		List<Product> products = initializeFields(userCtx);
 		
-		RetrieveLimitedRecordsCommand limitedRecordsCommand = getAndConfigureCommand(parametrosBusqueda, 
-				userCtx, products);
+		RetrieveLimitedRecordsCommand limitedRecordsCommand = getAndConfigureCommand(parametrosBusqueda, atributos, userCtx);
 		
 		return extractSubitems(limitedRecordsCommand, userCtx);
 	}
 
 	private RetrieveLimitedRecordsCommand getAndConfigureCommand(Map<Product, String> parametrosBusqueda, 
-			UserSessionContext userCtx, List<Product> products) throws MdmException {
+			Map<Atributo, String> atributos, UserSessionContext userCtx) throws MdmException {
 		RetrieveLimitedRecordsCommand limitedRecordsCommand = commandFactory
 				.getLimitedRecordsCommand(userCtx, Product.TABLE_NAME.toString());
 		ResultDefinitionEx resultDefinition = (ResultDefinitionEx) limitedRecordsCommand.getResultDefinition();
-		for (Product product : products) {
-			resultDefinition.addSelectField(product.toString());
+		initProducts(userCtx, resultDefinition);
+		
+		configureSearch(parametrosBusqueda, atributos, userCtx, limitedRecordsCommand);
+		return limitedRecordsCommand;
+	}
+
+	private void initProducts(UserSessionContext userCtx, ResultDefinitionEx resultDefinition) {
+		for (Product product : Product.values()) {
+			if (product != Product.TABLE_NAME) {
+				product.initFieldId(repository, userCtx);
+				resultDefinition.addSelectField(product.toString());
+			}
 		}
+	}
+
+	private void configureSearch(Map<Product, String> parametrosBusqueda, Map<Atributo, String> atributos,
+			UserSessionContext userCtx, RetrieveLimitedRecordsCommand limitedRecordsCommand) {
 		Search search = limitedRecordsCommand.getSearch();
 		if (parametrosBusqueda.containsKey(Product.FIELD_DESC)) {
 			search.addSearchItem(new KeywordSearchDimension(), new KeywordSearchConstraint(parametrosBusqueda.get(
@@ -80,16 +94,14 @@ public class Buscador implements BuscadorLocal {
 			search.addSearchItem(new FieldSearchDimension(product.getFieldId()), new TextSearchConstraint(
 					parametrosBusqueda.get(product), TextSearchConstraint.CONTAINS));
 		}
-//		AttributeId attributeId = new AttributeId("A4_291288");
-		Atributo.SUBSTANCIA_ACTIVA.initAttributeId(repository, userCtx);
-		AttributeSearchDimension attributeSearchDimension = new AttributeSearchDimension(Product.FIELD_TAX_GRUPO_ART.getFieldId(), 
-				Atributo.SUBSTANCIA_ACTIVA.getAttributeId());
-		search.addSearchItem(attributeSearchDimension, new TextSearchConstraint(
-				"Aciclovir", TextSearchConstraint.CONTAINS));
+		for (Atributo atributo : atributos.keySet()) {
+			SearchDimension attributeSearchDimension = new AttributeSearchDimension(
+					Product.FIELD_TAX_GRUPO_ART.getFieldId(), atributo.initAttributeId(repository, userCtx));
+			search.addSearchItem(attributeSearchDimension, new TextSearchConstraint(
+					atributos.get(atributo), TextSearchConstraint.CONTAINS));
+		}
 		search.addSearchItem(new FieldSearchDimension(Product.FIELD_TIPO_MATERIAL.getFieldId()),
 				new TextSearchConstraint(PRODUCTO_BASE_IND, TextSearchConstraint.STARTS_WITH));
-		loc.debugT("Before executing command");
-		return limitedRecordsCommand;
 	}
 
 	private List<SubItem> extractSubitems(RetrieveLimitedRecordsCommand limitedRecordsCommand, UserSessionContext userCtx) 
@@ -113,32 +125,34 @@ public class Buscador implements BuscadorLocal {
 		return result;
 	}
 
-	@SuppressWarnings("unused")
-	private void addDebug(UserSessionContext userCtx, List<SubItem> result) {
-		SubItem standard = new SubItem();
-		Item standardItem = new Item();
-		standardItem.setCategoria(repository.getAttribute(userCtx, Product.TABLE_NAME.toString())[3].getCode());
-		standardItem.setClaveProducto(Arrays.toString(repository.getTax(userCtx)));
-		standard.setItemPadre(standardItem);
-		result.add(standard);
-	}
-
-	private List<Product> initializeFields(UserSessionContext userCtx) {
-		List<Product> productFields = new ArrayList<Product>();
-		for (Product product : Product.values()) {
-			if (product != Product.TABLE_NAME) {
-				productFields.add(product);
-				product.initFieldId(repository, userCtx);
-			}
-		}
-		return productFields;
-	}
-
 	private Record[] getResultRecords(RetrieveLimitedRecordsCommand command)
 			throws CommandException {
 		command.execute();
 		RecordResultSet resultSet = command.getRecords();
 		return resultSet.getRecords();
+	}
+	
+	@SuppressWarnings("unused")
+	private void addDebug(UserSessionContext userCtx, List<SubItem> result) {
+		SubItem standard = new SubItem();
+		Item standardItem = new Item();
+		AttributeProperties[] attributeProps = repository.getAttribute(userCtx);
+		standardItem.setCategoria(attributeProps[3].getCode());
+		String[] tax = repository.getTax(userCtx);
+		standardItem.setClaveProducto(Arrays.toString(tax));
+		AttributeProperties attributeConcentracion = attributeProps[0];
+		char[] charArray = attributeConcentracion.toString().toCharArray();
+		StringBuilder builder = new StringBuilder();
+		for (char c : charArray) {
+			builder.append(c);
+			builder.append(":");
+			builder.append(Integer.toHexString(c));
+			builder.append("; ");
+		}
+		standardItem.setDescripcion(builder.toString());
+		standardItem.setPMR(attributeConcentracion.getCode());
+		standard.setItemPadre(standardItem);
+		result.add(standard);
 	}
 
 	private Collection<? extends Record> addChildRecords(Record record,

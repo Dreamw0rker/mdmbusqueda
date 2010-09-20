@@ -31,9 +31,9 @@ public class Repository {
 		return getRepository(userCtx).getFieldId(tableName, fieldName);
 	}
 	
-	public AttributeProperties[] getAttribute(UserSessionContext userCtx, String tableName) {
+	public AttributeProperties[] getAttribute(UserSessionContext userCtx) {
 		AttributeSchema attributeSchema = getAttributeSchema(userCtx);
-		return attributeSchema.getAttributes("MDM_GRUPO_ART");
+		return attributeSchema.getAttributes(taxonomyTable);
 	}
 
 	private AttributeSchema getAttributeSchema(UserSessionContext userCtx) {
