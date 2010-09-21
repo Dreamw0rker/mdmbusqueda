@@ -53,7 +53,7 @@ public class BusquedaProductosServiceTest extends BaseMockitoTest {
 		verify(itemFactory).addDatosEntrada(eq(subItem), isA(DatosEntrada.class));
 	}
 
-	private SubItem subItemsFound() throws MdmException {
+	private SubItem subItemsFound() throws Exception {
 		SubItem subItem = mock(SubItem.class);
 		List<SubItem> subItems = Arrays.asList(new SubItem[] {subItem});
 		when(buscador.findProducts(anyMap(), anyMap())).thenReturn(subItems);
@@ -66,7 +66,7 @@ public class BusquedaProductosServiceTest extends BaseMockitoTest {
 		assertTrue(parametrosBusqueda.containsValue(value));
 	}
 
-	private Map<Product, String> executeTest() throws BusquedaProductosFault_Exception, MdmException {
+	private Map<Product, String> executeTest() throws Exception {
 		busquedaService.buscarProductos(busquedaProductosRequest);
 		ArgumentCaptor<Map> busquedaMap = ArgumentCaptor.forClass(Map.class);
 		verify(buscador).findProducts(busquedaMap.capture(), anyMap());
