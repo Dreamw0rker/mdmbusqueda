@@ -1,8 +1,15 @@
 package com.assa.mdm.ejb;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +31,6 @@ import com.assa.mdm.data.ItemFactory;
 import com.assa.mdm.data.Product;
 import com.assa.mdm.data.Repository;
 import com.assa.test.BaseMockitoTest;
-import com.sap.mdm.MdmException;
 import com.sap.mdm.data.Record;
 import com.sap.mdm.data.RecordResultSet;
 import com.sap.mdm.data.commands.RetrieveLimitedRecordsCommand;
@@ -65,7 +71,7 @@ public class BuscadorTest extends BaseMockitoTest {
 	private Item item;
 	
 	@Before
-	public void configureMocks() throws MdmException {
+	public void configureMocks() throws Exception {
 		when(mockMdmConnection.getUserContext()).thenReturn(userCtx );
 		when(mockCommandFactory.getLimitedRecordsCommand(userCtx, Product.TABLE_NAME.toString())).thenReturn(command );
 		when(command.getSearch()).thenReturn(search);
