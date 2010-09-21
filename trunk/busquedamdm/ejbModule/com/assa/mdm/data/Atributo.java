@@ -4,7 +4,7 @@ import com.sap.mdm.ids.AttributeId;
 import com.sap.mdm.session.UserSessionContext;
 
 public enum Atributo {
-	SUBSTANCIA_ACTIVA("Sustancia Activa de Antivirales");
+	SUBSTANCIA_ACTIVA("Sustancia Activa de Antivirales"), CONCENTRACION("Concentracio\u0301n de Antivirales");
 	
 	private final String attributeCode;
 	private AttributeId attributeId;
@@ -18,8 +18,8 @@ public enum Atributo {
 		return attributeCode;
 	}
 	
-	public void initAttributeId(Repository repository, UserSessionContext userCtx) {
-		attributeId = repository.getAttributeId(userCtx, attributeCode);
+	public AttributeId initAttributeId(Repository repository, UserSessionContext userCtx) {
+		return attributeId = repository.getAttributeId(userCtx, attributeCode);	
 	}
 
 	public AttributeId getAttributeId() {

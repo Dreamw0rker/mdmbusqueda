@@ -1,5 +1,7 @@
 package com.assa.mdm.ejb;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -33,6 +35,7 @@ import com.sap.mdm.search.SearchDimension;
 import com.sap.mdm.search.TextSearchConstraint;
 import com.sap.mdm.session.UserSessionContext;
 import com.sap.mdm.valuetypes.StringValue;
+import com.sap.security.core.server.destinations.api.Destination;
 import com.sap.tc.logging.Location;
 
 /**
@@ -54,11 +57,11 @@ public class Buscador implements BuscadorLocal {
 	private ItemFactory itemFactory = new ItemFactory();
 
 	@Override
-	public List<SubItem> findProducts(Map<Product, String> parametrosBusqueda, Map<Atributo,String> atributos) throws MdmException {
+	public List<SubItem> findProducts(Map<Product, String> parametrosBusqueda, Map<Atributo,String> atributos) 
+		throws MdmException, Exception {
+		
 		UserSessionContext userCtx = mdmConnection.getUserContext();
-		
 		RetrieveLimitedRecordsCommand limitedRecordsCommand = getAndConfigureCommand(parametrosBusqueda, atributos, userCtx);
-		
 		return extractSubitems(limitedRecordsCommand, userCtx);
 	}
 
@@ -121,7 +124,7 @@ public class Buscador implements BuscadorLocal {
 				subItems.add(itemFactory.toItemPadre(child));
 			}
 		}
-//		addDebug(userCtx, result);
+		addDebug(userCtx, result);
 		return result;
 	}
 
@@ -132,7 +135,6 @@ public class Buscador implements BuscadorLocal {
 		return resultSet.getRecords();
 	}
 	
-	@SuppressWarnings("unused")
 	private void addDebug(UserSessionContext userCtx, List<SubItem> result) {
 		SubItem standard = new SubItem();
 		Item standardItem = new Item();
@@ -140,17 +142,23 @@ public class Buscador implements BuscadorLocal {
 		standardItem.setCategoria(attributeProps[3].getCode());
 		String[] tax = repository.getTax(userCtx);
 		standardItem.setClaveProducto(Arrays.toString(tax));
-		AttributeProperties attributeConcentracion = attributeProps[0];
-		char[] charArray = attributeConcentracion.toString().toCharArray();
-		StringBuilder builder = new StringBuilder();
-		for (char c : charArray) {
-			builder.append(c);
-			builder.append(":");
-			builder.append(Integer.toHexString(c));
-			builder.append("; ");
+		
+		Destination destination = mdmConnection.getDestination();
+		Class<? extends Destination> destinationClass = destination.getClass();
+		standardItem.setPresentacion(destinationClass.toString());
+		String security = "";
+		String props = "";
+		try {
+////			Method method = destinationClass.getMethod("getSecuritySubject");
+////			Object methodRes = method.invoke(destination);
+////			security = methodRes.toString();
+			Method method = destinationClass.getMethod("getValidAuthenticationTypes");
+			props = method.invoke(destination).toString();
+		} catch (Exception e) {
+			security = e.getMessage() + ":" + e.getCause();
 		}
-		standardItem.setDescripcion(builder.toString());
-		standardItem.setPMR(attributeConcentracion.getCode());
+		standardItem.setPMR(security + "/" + props);
+		standardItem.setPresentacionEmpaque(Arrays.toString(destinationClass.getMethods()));
 		standard.setItemPadre(standardItem);
 		result.add(standard);
 	}

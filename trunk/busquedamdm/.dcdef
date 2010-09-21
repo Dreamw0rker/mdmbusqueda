@@ -88,6 +88,14 @@
 		</dependency>
 		<dependency>
 			<dc-ref>
+				<name>tc/bl/exception/lib</name>
+				<vendor>sap.com</vendor>
+			</dc-ref>
+			<pp-ref>api</pp-ref>
+			<at-build-time/>
+		</dependency>
+		<dependency>
+			<dc-ref>
 				<name>tc/bl/logging/api</name>
 				<vendor>sap.com</vendor>
 			</dc-ref>
@@ -96,6 +104,22 @@
 		<dependency>
 			<dc-ref>
 				<name>tc/bl/logging/api</name>
+				<vendor>sap.com</vendor>
+			</dc-ref>
+			<pp-ref>api</pp-ref>
+			<at-build-time/>
+		</dependency>
+		<dependency>
+			<dc-ref>
+				<name>tc/bl/security/destinations/api</name>
+				<vendor>sap.com</vendor>
+			</dc-ref>
+			<pp-ref>api</pp-ref>
+			<at-build-time/>
+		</dependency>
+		<dependency>
+			<dc-ref>
+				<name>tc/bl/security/lib</name>
 				<vendor>sap.com</vendor>
 			</dc-ref>
 			<pp-ref>api</pp-ref>
