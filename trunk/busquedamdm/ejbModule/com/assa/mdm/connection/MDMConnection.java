@@ -2,7 +2,12 @@ package com.assa.mdm.connection;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Properties;
 
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
+import com.sap.engine.services.configuration.appconfiguration.ApplicationPropertiesAccess;
 import com.sap.mdm.session.SessionManager;
 import com.sap.mdm.session.SessionTypes;
 import com.sap.mdm.session.UserSessionContext;
@@ -14,8 +19,8 @@ import com.sap.security.core.server.destinations.api.DestinationServiceLocator;
 public class MDMConnection {
 	
 	enum ServerConfig {
-		SERVER_NAME("serverName"), REPOSITORY_NAME("repositoryName"), REPOSITORY_USER("Admin"), 
-		REPOSITORY_PASS("sapmdm1908"), APP_NAME("BUSCADOR");
+		SERVER_NAME("serverName"), REPOSITORY_NAME("repositoryName"), REPOSITORY_USER("mdm.repositoryUser"), 
+		REPOSITORY_PASS("mdm.repositoryPassword"), APP_NAME("BUSCADOR");
 		
 		private String value;
 
@@ -44,6 +49,7 @@ public class MDMConnection {
 		destination = destinationService.getDestination(ConnectionProperties.DESTINATION_TYPE.value, 
 				ConnectionProperties.DESTINATION_NAME.value);
 		getServerConfig(destination);
+		getCredentials();
 		this.userSessionContext = new UserSessionContext(ServerConfig.SERVER_NAME.value, 
 				ServerConfig.REPOSITORY_NAME.value, "", ServerConfig.REPOSITORY_USER.value);
 		// Set application name to be displayed in the MDM Console
@@ -53,13 +59,23 @@ public class MDMConnection {
 		return userSessionContext;
 	}
 	
-	
+	private void getCredentials() throws NamingException {
+		ApplicationPropertiesAccess appCfgProps = (ApplicationPropertiesAccess) 
+			new InitialContext().lookup("ApplicationConfiguration");
+		Properties applicationProperties = appCfgProps.getApplicationProperties();
+		getApplicationProperty(applicationProperties, ServerConfig.REPOSITORY_USER);
+		getApplicationProperty(applicationProperties, ServerConfig.REPOSITORY_PASS);
+	}
+
+	private void getApplicationProperty(Properties applicationProperties, ServerConfig serverConfig) {
+		serverConfig.value = applicationProperties.getProperty(serverConfig.value);
+	}
+
 	private void getServerConfig(Destination destination) throws Exception {
 		Method propertyMethod = destination.getClass().getMethod(ConnectionProperties.PROPERTY_METHOD.value, 
 				String.class);
 		setServerConfig(destination, propertyMethod, ServerConfig.SERVER_NAME);
 		setServerConfig(destination, propertyMethod, ServerConfig.REPOSITORY_NAME);
-//		setServerConfig(destination, propertyMethod, ServerConfig.REPOSITORY_USER);
 	}
 
 
