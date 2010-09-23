@@ -127,6 +127,14 @@
 		</dependency>
 		<dependency>
 			<dc-ref>
+				<name>tc/je/appconfiguration/api</name>
+				<vendor>sap.com</vendor>
+			</dc-ref>
+			<pp-ref>api</pp-ref>
+			<at-build-time/>
+		</dependency>
+		<dependency>
+			<dc-ref>
 				<name>tc/je/webservices/api</name>
 				<vendor>sap.com</vendor>
 			</dc-ref>
