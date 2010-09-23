@@ -84,13 +84,6 @@
 		</dependency>
 		<dependency>
 			<dc-ref>
-				<name>com.sap.mdm.tech.connector</name>
-				<vendor>sap.com</vendor>
-			</dc-ref>
-			<at-design-time/>
-		</dependency>
-		<dependency>
-			<dc-ref>
 				<name>com.sap.mdm.tech.mdm4j</name>
 				<vendor>sap.com</vendor>
 			</dc-ref>
